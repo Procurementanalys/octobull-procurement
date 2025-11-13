@@ -3,280 +3,224 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin - Procurement Dashboard</title>
+<title>Login | Store Request</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-  @keyframes slideDown {
+  @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-20px); }
     to { opacity: 1; transform: translateY(0); }
   }
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
   }
-  .animate-slideDown { animation: slideDown 0.5s ease-out; }
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+  }
+  @keyframes bullRun {
+    0%, 100% { transform: translateX(0) rotate(0deg); }
+    50% { transform: translateX(10px) rotate(5deg); }
+  }
+  
   .animate-fadeIn { animation: fadeIn 0.6s ease-out; }
-  .gradient-header {
-    background: linear-gradient(135deg, #FF6B35 0%, #F7931E 50%, #1E3A8A 100%);
+  .animate-pulse-slow { animation: pulse 3s ease-in-out infinite; }
+  .icon-float { animation: float 3s ease-in-out infinite; }
+  .bull-run { animation: bullRun 2s ease-in-out infinite; }
+  
+  /* Octobull Theme */
+  .gradient-octobull {
+    background: linear-gradient(135deg, #FF6B35 0%, #F7931E 50%, #1E88E5 100%);
   }
-  .card-shadow {
-    box-shadow: 0 10px 40px rgba(255, 107, 53, 0.15);
+  .gradient-octobull-card {
+    background: linear-gradient(135deg, #ffffff 0%, #FFF5F0 100%);
   }
-  .card-hover:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 50px rgba(255, 107, 53, 0.25);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  .badge-approved {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  }
-  .badge-rejected {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  }
-  .badge-pending {
-    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-  }
-  .btn-export {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  }
-  .btn-export:hover {
-    background: linear-gradient(135deg, #059669 0%, #047857 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
-  }
-  .btn-logout {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  }
-  .btn-logout:hover {
-    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4);
-  }
-  .modal-backdrop {
-    backdrop-filter: blur(8px);
-    background: rgba(0, 0, 0, 0.6);
-  }
-  .modal-content {
-    animation: modalPop 0.3s ease-out;
-  }
-  @keyframes modalPop {
-    from { transform: scale(0.9); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-  }
+  .bg-octobull-orange { background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%); }
+  .bg-octobull-blue { background: linear-gradient(135deg, #1E88E5 0%, #42A5F5 100%); }
+  .bg-octobull-green { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+  
   body {
-    background: linear-gradient(135deg, #FFF8F3 0%, #FFE8DD 50%, #E3F2FD 100%);
+    background: linear-gradient(135deg, #FF6B35 0%, #F7931E 30%, #1E88E5 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  /* Floating Bulls Animation */
+  .bull-icon {
+    position: absolute;
+    font-size: 3rem;
+    opacity: 0.1;
+    animation: float 4s ease-in-out infinite;
+  }
+  .bull-1 { top: 10%; left: 10%; animation-delay: 0s; }
+  .bull-2 { top: 20%; right: 15%; animation-delay: 1s; }
+  .bull-3 { bottom: 15%; left: 20%; animation-delay: 2s; }
+  .bull-4 { bottom: 25%; right: 10%; animation-delay: 1.5s; }
+  
+  input:focus {
+    transform: scale(1.02);
+    transition: all 0.3s ease;
+    border-color: #FF6B35;
+    box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.1);
+  }
+  
+  button:hover {
+    transform: translateY(-3px);
+    transition: all 0.3s ease;
+  }
+  
+  .card-shadow {
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Decorative circles */
+  .deco-circle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.15;
+  }
+  .deco-1 {
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, #ffffff 0%, transparent 70%);
+    top: -150px;
+    left: -150px;
+  }
+  .deco-2 {
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, #ffffff 0%, transparent 70%);
+    bottom: -200px;
+    right: -200px;
   }
 </style>
 </head>
-<body class="min-h-screen">
+<body class="flex items-center justify-center min-h-screen">
 
-<!-- Header -->
-<div class="gradient-header text-white px-6 py-6 shadow-2xl animate-slideDown">
-  <div class="max-w-6xl mx-auto flex justify-between items-center">
-    <div class="flex items-center gap-4">
-      <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-        <i class="fas fa-chart-line text-3xl"></i>
-      </div>
-      <div>
-        <h1 class="text-3xl font-bold">Procurement Dashboard</h1>
-        <p class="text-sm text-white/80">Admin Panel - Manage All Requests</p>
-      </div>
-    </div>
-    <div class="flex items-center gap-3">
-      <button onclick="exportCSV()" 
-        class="btn-export text-white px-5 py-3 rounded-xl font-semibold transition-all shadow-lg flex items-center gap-2">
-        <i class="fas fa-file-excel"></i>
-        <span>Export CSV</span>
-      </button>
-      <button onclick="logout()" 
-        class="btn-logout text-white px-5 py-3 rounded-xl font-semibold transition-all shadow-lg flex items-center gap-2">
-        <i class="fas fa-sign-out-alt"></i>
-        <span>Logout</span>
-      </button>
-    </div>
-  </div>
-</div>
+<!-- Floating Bulls -->
+<div class="bull-icon bull-1">🐂</div>
+<div class="bull-icon bull-2">📈</div>
+<div class="bull-icon bull-3">🐂</div>
+<div class="bull-icon bull-4">💰</div>
 
-<div class="max-w-6xl mx-auto p-6">
-  <!-- Section Header -->
-  <div class="flex items-center gap-3 mb-6 animate-fadeIn">
-    <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-yellow-600 rounded-xl flex items-center justify-center shadow-lg">
-      <i class="fas fa-inbox text-white text-xl"></i>
+<!-- Decorative circles -->
+<div class="deco-circle deco-1"></div>
+<div class="deco-circle deco-2"></div>
+
+<div class="gradient-octobull-card card-shadow rounded-3xl p-12 w-[480px] text-center animate-fadeIn backdrop-blur-lg border-2 border-white/50 relative z-10">
+  
+  <!-- Logo/Icon with Bull -->
+  <div class="mb-8 icon-float">
+    <div class="mx-auto w-24 h-24 bg-octobull-orange rounded-3xl flex items-center justify-center shadow-2xl relative overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
+      <span class="text-5xl bull-run relative z-10">🐂</span>
     </div>
-    <h2 class="text-2xl font-bold text-gray-800">Daftar Ticket Request</h2>
   </div>
   
-  <!-- Ticket Cards Grid -->
-  <div id="ticketContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-</div>
-
-<!-- Detail Modal -->
-<div id="detailModal" class="modal-backdrop fixed inset-0 flex items-center justify-center hidden z-50">
-  <div class="modal-content bg-white rounded-3xl w-[650px] p-8 shadow-2xl relative">
-    <button onclick="closeModal()" 
-      class="absolute top-4 right-4 w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-all">
-      <i class="fas fa-times text-gray-600"></i>
-    </button>
-    
-    <div class="flex items-center gap-3 mb-6">
-      <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-pink-600 rounded-xl flex items-center justify-center">
-        <i class="fas fa-clipboard-list text-white text-xl"></i>
+  <h2 class="text-4xl font-extrabold mb-3 bg-gradient-to-r from-orange-600 via-amber-500 to-blue-600 bg-clip-text text-transparent">
+    Octobull Store
+  </h2>
+  <p class="text-gray-600 mb-10 text-base font-medium">
+    <i class="fas fa-shopping-cart text-orange-500 mr-2"></i>
+    Request Management System
+  </p>
+  
+  <!-- Input Store Code -->
+  <div class="relative mb-5">
+    <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+      <i class="fas fa-store text-orange-500 text-lg"></i>
+    </div>
+    <input id="store_code" type="text" placeholder="Kode Store" 
+      class="w-full pl-14 pr-5 py-4 border-3 border-gray-300 rounded-2xl focus:ring-4 focus:ring-orange-200 outline-none transition-all text-base font-medium shadow-lg">
+  </div>
+  
+  <!-- Input Password -->
+  <div class="relative mb-8">
+    <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+      <i class="fas fa-lock text-blue-500 text-lg"></i>
+    </div>
+    <input id="password" type="password" placeholder="Password" 
+      class="w-full pl-14 pr-5 py-4 border-3 border-gray-300 rounded-2xl focus:ring-4 focus:ring-blue-200 outline-none transition-all text-base font-medium shadow-lg">
+  </div>
+  
+  <!-- Login Button -->
+  <button onclick="login()" 
+    class="w-full bg-octobull-orange text-white py-4 rounded-2xl hover:shadow-2xl transition-all font-bold text-lg flex items-center justify-center gap-3 mb-3 shadow-xl">
+    <i class="fas fa-sign-in-alt text-xl"></i>
+    <span>Login Sekarang</span>
+  </button>
+  
+  <p id="msg" class="text-sm text-red-600 mt-4 font-semibold"></p>
+  
+  <!-- Reset Password Section -->
+  <div id="resetForm" class="hidden mt-8 border-t-2 border-orange-200 pt-8">
+    <h3 class="text-xl font-bold text-gray-800 mb-5 flex items-center justify-center gap-2">
+      <i class="fas fa-key text-orange-500"></i> 
+      <span>Reset Password</span>
+    </h3>
+    <div class="relative mb-4">
+      <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+        <i class="fas fa-store text-gray-400"></i>
       </div>
-      <h3 class="text-2xl font-bold text-gray-800">
-        Detail Ticket <span id="modalTicketId" class="text-orange-600"></span>
-      </h3>
+      <input id="reset_store" type="text" placeholder="Kode Store" 
+        class="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 outline-none transition-all shadow-md">
     </div>
-    
-    <div id="modalContent" class="overflow-auto max-h-[350px] mb-6 bg-orange-50 rounded-2xl p-4"></div>
-    
-    <div class="flex gap-3 justify-end">
-      <button onclick="updateStatus('Approved')" 
-        class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl hover:shadow-xl transition-all font-semibold flex items-center gap-2">
-        <i class="fas fa-check-circle"></i>
-        <span>Approve</span>
-      </button>
-      <button onclick="updateStatus('Pending')" 
-        class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-6 py-3 rounded-xl hover:shadow-xl transition-all font-semibold flex items-center gap-2">
-        <i class="fas fa-clock"></i>
-        <span>Pending</span>
-      </button>
-      <button onclick="updateStatus('Rejected')" 
-        class="bg-gradient-to-r from-red-500 to-pink-600 text-white px-6 py-3 rounded-xl hover:shadow-xl transition-all font-semibold flex items-center gap-2">
-        <i class="fas fa-times-circle"></i>
-        <span>Reject</span>
-      </button>
+    <div class="relative mb-5">
+      <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+        <i class="fas fa-key text-gray-400"></i>
+      </div>
+      <input id="new_pass" type="password" placeholder="Password Baru" 
+        class="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 outline-none transition-all shadow-md">
     </div>
+    <button onclick="resetPassword()" 
+      class="w-full bg-octobull-green text-white py-3 rounded-xl hover:shadow-xl transition-all font-bold flex items-center justify-center gap-2 shadow-lg">
+      <i class="fas fa-sync-alt"></i>
+      <span>Reset Password</span>
+    </button>
+    <p id="resetMsg" class="text-sm text-gray-700 mt-4 font-medium"></p>
+  </div>
+  
+  <!-- Toggle Reset Link -->
+  <button onclick="showReset()" class="mt-8 text-base text-orange-600 hover:text-orange-800 font-bold hover:underline transition-all">
+    <i class="fas fa-question-circle"></i> Lupa Password?
+  </button>
+  
+  <!-- Footer Note -->
+  <div class="mt-8 pt-6 border-t-2 border-gray-200">
+    <p class="text-xs text-gray-500 flex items-center justify-center gap-2">
+      <i class="fas fa-shield-alt text-orange-500"></i>
+      <span>Powered by <strong class="text-orange-600">Octobull</strong> System</span>
+    </p>
   </div>
 </div>
 
 <script>
-const BASE_URL='https://script.google.com/macros/s/AKfycbzkbIrP2o6-LR2aq2E44dHMmzpdct3Hx_tg6AinU_93o3IYjbtcmtE63Zvh-IbDYQP7Yw/exec';
-const store_code=localStorage.getItem("store_code");
-const role=localStorage.getItem("role");
-if(!store_code || role.toLowerCase()!=="admin") window.location.href="login.html";
+const BASE_URL='https://script.google.com/macros/s/AKfycbyEIxM30bhdFSv62EwNJ3yO6V5I-b_g3ZhXWzVea6rbZj7j1Nq_-ljdIPG5yk5skVtJjw/exec';
 
-let allRequests=[], currentTicket=null;
-
-async function loadTickets(){
-  const res=await axios.get(`${BASE_URL}?action=getRequests`);
-  allRequests=res.data;
-  const container=document.getElementById("ticketContainer");
-  container.innerHTML="";
-  const grouped={};
-  allRequests.forEach(r=>{if(!grouped[r.ticket_id]) grouped[r.ticket_id]=[]; grouped[r.ticket_id].push(r);});
-  Object.keys(grouped).reverse().forEach(ticketId=>{
-    const items=grouped[ticketId];
-    const status=items[0].status||"Pending";
-    const store=items[0].store_code;
-    const tanggal=items[0].tanggal;
-    const card=document.createElement("div");
-    card.className="bg-white p-6 rounded-2xl shadow-lg card-hover transition-all border-2 border-orange-100 animate-fadeIn";
-    card.innerHTML=`
-      <div class="flex items-start justify-between mb-4">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-gradient-to-br from-orange-400 to-yellow-500 rounded-xl flex items-center justify-center">
-            <i class="fas fa-ticket-alt text-white"></i>
-          </div>
-          <div>
-            <h3 class="font-bold text-gray-800 text-lg">Ticket #${ticketId}</h3>
-            <p class="text-xs text-gray-500">
-              <i class="fas fa-store mr-1"></i>${store}
-            </p>
-          </div>
-        </div>
-        <span class="px-3 py-1.5 text-xs rounded-full font-bold text-white shadow-md ${
-          status==="Approved"?"badge-approved":
-          status==="Rejected"?"badge-rejected":"badge-pending"
-        }">${status}</span>
-      </div>
-      
-      <div class="bg-orange-50 rounded-xl p-3 mb-4">
-        <div class="flex items-center gap-2 text-sm text-gray-600">
-          <i class="fas fa-calendar-alt text-orange-500"></i>
-          <span class="font-medium">${tanggal}</span>
-        </div>
-        <div class="flex items-center gap-2 text-sm text-gray-600 mt-2">
-          <i class="fas fa-box text-green-500"></i>
-          <span>${items.length} item(s)</span>
-        </div>
-      </div>
-      
-      <button onclick='openDetail("${ticketId}")' 
-        class="w-full bg-gradient-to-r from-orange-500 to-yellow-600 text-white py-2.5 rounded-xl hover:shadow-xl transition-all font-semibold flex items-center justify-center gap-2">
-        <i class="fas fa-eye"></i>
-        <span>Lihat Detail</span>
-      </button>
-    `;
-    container.appendChild(card);
-  });
+async function login(){
+  const store_code=document.getElementById("store_code").value.trim();
+  const password=document.getElementById("password").value.trim();
+  const msg=document.getElementById("msg");
+  msg.innerText="Sedang memproses...";
+  const res=await fetch(`${BASE_URL}?action=login&store_code=${store_code}&password=${password}`);
+  const data=await res.json();
+  if(data.success){
+    localStorage.setItem("store_code",data.store_code);
+    localStorage.setItem("store_name",data.store_name);
+    localStorage.setItem("role",data.role);
+    if(data.role.toLowerCase()==="admin") window.location.href="admin.html";
+    else window.location.href="request.html";
+  }else msg.innerText=data.message;
 }
-
-function openDetail(ticketId){
-  currentTicket=ticketId;
-  const items=allRequests.filter(r=>r.ticket_id===ticketId);
-  document.getElementById("modalTicketId").innerText="#"+ticketId;
-  let html=`<div class="overflow-x-auto">
-    <table class='w-full text-sm border-2 border-gray-200 rounded-xl overflow-hidden'>
-      <thead class="bg-gradient-to-r from-orange-100 to-yellow-100">
-        <tr>
-          <th class="px-4 py-3 text-left font-bold text-gray-700">Item ID</th>
-          <th class="px-4 py-3 text-left font-bold text-gray-700">Nama Item</th>
-          <th class="px-4 py-3 text-left font-bold text-gray-700">Qty</th>
-          <th class="px-4 py-3 text-left font-bold text-gray-700">Remarks</th>
-          <th class="px-4 py-3 text-left font-bold text-gray-700">Status</th>
-        </tr>
-      </thead>
-      <tbody>`;
-  html+=items.map(r=>`<tr class='border-t hover:bg-orange-50 transition-colors'>
-    <td class="px-4 py-3 font-mono text-gray-600">${r.item_id}</td>
-    <td class="px-4 py-3 font-semibold">${r.item_name}</td>
-    <td class="px-4 py-3 font-bold text-green-600">${r.qty}</td>
-    <td class="px-4 py-3 text-gray-600">${r.remarks}</td>
-    <td class="px-4 py-3">
-      <span class="px-2 py-1 rounded-full text-xs font-bold text-white ${
-        r.status==='Approved'?'badge-approved':r.status==='Rejected'?'badge-rejected':'badge-pending'
-      }">${r.status}</span>
-    </td>
-  </tr>`).join("");
-  html+="</tbody></table></div>";
-  document.getElementById("modalContent").innerHTML=html;
-  document.getElementById("detailModal").classList.remove("hidden");
+function showReset(){document.getElementById("resetForm").classList.toggle("hidden");}
+async function resetPassword(){
+  const store_code=document.getElementById("reset_store").value.trim();
+  const new_pass=document.getElementById("new_pass").value.trim();
+  const res=await fetch(BASE_URL,{method:"POST",body:new URLSearchParams({action:"resetPassword",store_code,new_pass})});
+  const data=await res.json();
+  document.getElementById("resetMsg").innerText=data.message;
 }
-
-async function updateStatus(newStatus){
-  if(!currentTicket) return;
-  if(!confirm(`Ubah status Ticket #${currentTicket} menjadi ${newStatus}?`)) return;
-  const res=await axios.post(BASE_URL,new URLSearchParams({action:"updateStatus",ticket_id:currentTicket,status:newStatus}));
-  if(res.data.success){
-    alert("Status berhasil diperbarui!");
-    document.getElementById("detailModal").classList.add("hidden");
-    loadTickets();
-  }else alert("Gagal memperbarui status.");
-}
-
-function closeModal(){document.getElementById("detailModal").classList.add("hidden");}
-
-function logout(){localStorage.clear();window.location.href="login.html";}
-
-// Export CSV langsung download
-async function exportCSV(){
-  try{
-    const res=await fetch(`${BASE_URL}?action=exportRequestsCSV`);
-    const blob=await res.blob();
-    const url=window.URL.createObjectURL(blob);
-    const a=document.createElement("a");
-    a.href=url;
-    a.download="Requests.csv";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    window.URL.revokeObjectURL(url);
-  }catch(err){alert("Gagal export CSV"); console.error(err);}
-}
-
-loadTickets();
 </script>
 </body>
 </html>
