@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - Procurement Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .animate-slideDown { animation: slideDown 0.5s ease-out; }
+  .animate-fadeIn { animation: fadeIn 0.6s ease-out; }
+  .gradient-header {
+    background: linear-gradient(135deg, #FF6B35 0%, #F7931E 50%, #1E3A8A 100%);
+  }
+  .card-shadow {
+    box-shadow: 0 10px 40px rgba(255, 107, 53, 0.15);
+  }
+  .card-hover:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 50px rgba(255, 107, 53, 0.25);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .badge-approved {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  }
+  .badge-rejected {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  }
+  .badge-pending {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  }
+  .btn-export {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  }
+  .btn-export:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+  }
+  .btn-logout {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  }
+  .btn-logout:hover {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4);
+  }
+  .modal-backdrop {
+    backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.6);
+  }
+  .modal-content {
+    animation: modalPop 0.3s ease-out;
+  }
+  @keyframes modalPop {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  body {
+    background: linear-gradient(135deg, #FFF8F3 0%, #FFE8DD 50%, #E3F2FD 100%);
+  }
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- Header -->
+<div class="gradient-header text-white px-6 py-6 shadow-2xl animate-slideDown">
+  <div class="max-w-6xl mx-auto flex justify-between items-center">
+    <div class="flex items-center gap-4">
+      <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+        <i class="fas fa-chart-line text-3xl"></i>
+      </div>
+      <div>
+        <h1 class="text-3xl font-bold">Procurement Dashboard</h1>
+        <p class="text-sm text-white/80">Admin Panel - Manage All Requests</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <button onclick="exportCSV()" 
+        class="btn-export text-white px-5 py-3 rounded-xl font-semibold transition-all shadow-lg flex items-center gap-2">
+        <i class="fas fa-file-excel"></i>
+        <span>Export CSV</span>
+      </button>
+      <button onclick="logout()" 
+        class="btn-logout text-white px-5 py-3 rounded-xl font-semibold transition-all shadow-lg flex items-center gap-2">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Logout</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="max-w-6xl mx-auto p-6">
+  <!-- Section Header -->
+  <div class="flex items-center gap-3 mb-6 animate-fadeIn">
+    <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-yellow-600 rounded-xl flex items-center justify-center shadow-lg">
+      <i class="fas fa-inbox text-white text-xl"></i>
+    </div>
+    <h2 class="text-2xl font-bold text-gray-800">Daftar Ticket Request</h2>
+  </div>
+  
+  <!-- Ticket Cards Grid -->
+  <div id="ticketContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+</div>
+
+<!-- Detail Modal -->
+<div id="detailModal" class="modal-backdrop fixed inset-0 flex items-center justify-center hidden z-50">
+  <div class="modal-content bg-white rounded-3xl w-[650px] p-8 shadow-2xl relative">
+    <button onclick="closeModal()" 
+      class="absolute top-4 right-4 w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-all">
+      <i class="fas fa-times text-gray-600"></i>
+    </button>
+    
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-pink-600 rounded-xl flex items-center justify-center">
+        <i class="fas fa-clipboard-list text-white text-xl"></i>
+      </div>
+      <h3 class="text-2xl font-bold text-gray-800">
+        Detail Ticket <span id="modalTicketId" class="text-orange-600"></span>
+      </h3>
+    </div>
+    
+    <div id="modalContent" class="overflow-auto max-h-[350px] mb-6 bg-orange-50 rounded-2xl p-4"></div>
+    
+    <div class="flex gap-3 justify-end">
+      <button onclick="updateStatus('Approved')" 
+        class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl hover:shadow-xl transition-all font-semibold flex items-center gap-2">
+        <i class="fas fa-check-circle"></i>
+        <span>Approve</span>
+      </button>
+      <button onclick="updateStatus('Pending')" 
+        class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-6 py-3 rounded-xl hover:shadow-xl transition-all font-semibold flex items-center gap-2">
+        <i class="fas fa-clock"></i>
+        <span>Pending</span>
+      </button>
+      <button onclick="updateStatus('Rejected')" 
+        class="bg-gradient-to-r from-red-500 to-pink-600 text-white px-6 py-3 rounded-xl hover:shadow-xl transition-all font-semibold flex items-center gap-2">
+        <i class="fas fa-times-circle"></i>
+        <span>Reject</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+const BASE_URL='https://script.google.com/macros/s/AKfycbzkbIrP2o6-LR2aq2E44dHMmzpdct3Hx_tg6AinU_93o3IYjbtcmtE63Zvh-IbDYQP7Yw/exec';
+const store_code=localStorage.getItem("store_code");
+const role=localStorage.getItem("role");
+if(!store_code || role.toLowerCase()!=="admin") window.location.href="login.html";
+
+let allRequests=[], currentTicket=null;
+
+async function loadTickets(){
+  const res=await axios.get(`${BASE_URL}?action=getRequests`);
+  allRequests=res.data;
+  const container=document.getElementById("ticketContainer");
+  container.innerHTML="";
+  const grouped={};
+  allRequests.forEach(r=>{if(!grouped[r.ticket_id]) grouped[r.ticket_id]=[]; grouped[r.ticket_id].push(r);});
+  Object.keys(grouped).reverse().forEach(ticketId=>{
+    const items=grouped[ticketId];
+    const status=items[0].status||"Pending";
+    const store=items[0].store_code;
+    const tanggal=items[0].tanggal;
+    const card=document.createElement("div");
+    card.className="bg-white p-6 rounded-2xl shadow-lg card-hover transition-all border-2 border-orange-100 animate-fadeIn";
+    card.innerHTML=`
+      <div class="flex items-start justify-between mb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-gradient-to-br from-orange-400 to-yellow-500 rounded-xl flex items-center justify-center">
+            <i class="fas fa-ticket-alt text-white"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-gray-800 text-lg">Ticket #${ticketId}</h3>
+            <p class="text-xs text-gray-500">
+              <i class="fas fa-store mr-1"></i>${store}
+            </p>
+          </div>
+        </div>
+        <span class="px-3 py-1.5 text-xs rounded-full font-bold text-white shadow-md ${
+          status==="Approved"?"badge-approved":
+          status==="Rejected"?"badge-rejected":"badge-pending"
+        }">${status}</span>
+      </div>
+      
+      <div class="bg-orange-50 rounded-xl p-3 mb-4">
+        <div class="flex items-center gap-2 text-sm text-gray-600">
+          <i class="fas fa-calendar-alt text-orange-500"></i>
+          <span class="font-medium">${tanggal}</span>
+        </div>
+        <div class="flex items-center gap-2 text-sm text-gray-600 mt-2">
+          <i class="fas fa-box text-green-500"></i>
+          <span>${items.length} item(s)</span>
+        </div>
+      </div>
+      
+      <button onclick='openDetail("${ticketId}")' 
+        class="w-full bg-gradient-to-r from-orange-500 to-yellow-600 text-white py-2.5 rounded-xl hover:shadow-xl transition-all font-semibold flex items-center justify-center gap-2">
+        <i class="fas fa-eye"></i>
+        <span>Lihat Detail</span>
+      </button>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function openDetail(ticketId){
+  currentTicket=ticketId;
+  const items=allRequests.filter(r=>r.ticket_id===ticketId);
+  document.getElementById("modalTicketId").innerText="#"+ticketId;
+  let html=`<div class="overflow-x-auto">
+    <table class='w-full text-sm border-2 border-gray-200 rounded-xl overflow-hidden'>
+      <thead class="bg-gradient-to-r from-orange-100 to-yellow-100">
+        <tr>
+          <th class="px-4 py-3 text-left font-bold text-gray-700">Item ID</th>
+          <th class="px-4 py-3 text-left font-bold text-gray-700">Nama Item</th>
+          <th class="px-4 py-3 text-left font-bold text-gray-700">Qty</th>
+          <th class="px-4 py-3 text-left font-bold text-gray-700">Remarks</th>
+          <th class="px-4 py-3 text-left font-bold text-gray-700">Status</th>
+        </tr>
+      </thead>
+      <tbody>`;
+  html+=items.map(r=>`<tr class='border-t hover:bg-orange-50 transition-colors'>
+    <td class="px-4 py-3 font-mono text-gray-600">${r.item_id}</td>
+    <td class="px-4 py-3 font-semibold">${r.item_name}</td>
+    <td class="px-4 py-3 font-bold text-green-600">${r.qty}</td>
+    <td class="px-4 py-3 text-gray-600">${r.remarks}</td>
+    <td class="px-4 py-3">
+      <span class="px-2 py-1 rounded-full text-xs font-bold text-white ${
+        r.status==='Approved'?'badge-approved':r.status==='Rejected'?'badge-rejected':'badge-pending'
+      }">${r.status}</span>
+    </td>
+  </tr>`).join("");
+  html+="</tbody></table></div>";
+  document.getElementById("modalContent").innerHTML=html;
+  document.getElementById("detailModal").classList.remove("hidden");
+}
+
+async function updateStatus(newStatus){
+  if(!currentTicket) return;
+  if(!confirm(`Ubah status Ticket #${currentTicket} menjadi ${newStatus}?`)) return;
+  const res=await axios.post(BASE_URL,new URLSearchParams({action:"updateStatus",ticket_id:currentTicket,status:newStatus}));
+  if(res.data.success){
+    alert("Status berhasil diperbarui!");
+    document.getElementById("detailModal").classList.add("hidden");
+    loadTickets();
+  }else alert("Gagal memperbarui status.");
+}
+
+function closeModal(){document.getElementById("detailModal").classList.add("hidden");}
+
+function logout(){localStorage.clear();window.location.href="login.html";}
+
+// Export CSV langsung download
+async function exportCSV(){
+  try{
+    const res=await fetch(`${BASE_URL}?action=exportRequestsCSV`);
+    const blob=await res.blob();
+    const url=window.URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url;
+    a.download="Requests.csv";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+  }catch(err){alert("Gagal export CSV"); console.error(err);}
+}
+
+loadTickets();
+</script>
+</body>
+</html>

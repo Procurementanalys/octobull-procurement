@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login | Store Request</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  .animate-fadeIn { animation: fadeIn 0.6s ease-out; }
+  .animate-pulse-slow { animation: pulse 3s ease-in-out infinite; }
+  .gradient-bg {
+    background: linear-gradient(135deg, #FF6B35 0%, #F7931E 50%, #1E3A8A 100%);
+  }
+  .gradient-card {
+    background: linear-gradient(135deg, #ffffff 0%, #FFF5F0 100%);
+  }
+  input:focus {
+    transform: scale(1.02);
+    transition: all 0.3s ease;
+  }
+  button:hover {
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+  }
+  .icon-float {
+    animation: float 3s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+</style>
+</head>
+<body class="gradient-bg flex items-center justify-center min-h-screen">
+<!-- Decorative circles -->
+<div class="absolute top-10 left-10 w-32 h-32 bg-white opacity-10 rounded-full blur-xl"></div>
+<div class="absolute bottom-10 right-10 w-40 h-40 bg-white opacity-10 rounded-full blur-xl"></div>
+
+<div class="gradient-card shadow-2xl rounded-3xl p-10 w-[420px] text-center animate-fadeIn backdrop-blur-sm border border-white/20">
+  <!-- Logo/Icon -->
+  <div class="mb-6 icon-float">
+    <div class="mx-auto w-20 h-20 bg-gradient-to-br from-orange-500 to-yellow-600 rounded-2xl flex items-center justify-center shadow-lg">
+      <i class="fas fa-shopping-cart text-3xl text-white"></i>
+    </div>
+  </div>
+  
+  <h2 class="text-3xl font-bold mb-2 bg-gradient-to-r from-orange-600 to-yellow-600 bg-clip-text text-transparent">Store Request</h2>
+  <p class="text-gray-500 mb-8 text-sm">Masuk untuk melanjutkan</p>
+  
+  <!-- Input Store Code -->
+  <div class="relative mb-4">
+    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+      <i class="fas fa-store text-gray-400"></i>
+    </div>
+    <input id="store_code" type="text" placeholder="Kode Store" 
+      class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-orange-200 focus:border-orange-400 outline-none transition-all">
+  </div>
+  
+  <!-- Input Password -->
+  <div class="relative mb-6">
+    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+      <i class="fas fa-lock text-gray-400"></i>
+    </div>
+    <input id="password" type="password" placeholder="Password" 
+      class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-orange-200 focus:border-orange-400 outline-none transition-all">
+  </div>
+  
+  <!-- Login Button -->
+  <button onclick="login()" 
+    class="w-full bg-gradient-to-r from-orange-600 to-yellow-600 text-white py-3 rounded-xl hover:shadow-2xl transition-all font-semibold flex items-center justify-center gap-2">
+    <i class="fas fa-sign-in-alt"></i>
+    <span>Login</span>
+  </button>
+  
+  <p id="msg" class="text-sm text-red-500 mt-4 font-medium"></p>
+  
+  <!-- Reset Password Section -->
+  <div id="resetForm" class="hidden mt-6 border-t-2 border-gray-200 pt-6">
+    <h3 class="text-lg font-semibold text-gray-700 mb-4">
+      <i class="fas fa-key text-orange-500"></i> Reset Password
+    </h3>
+    <div class="relative mb-3">
+      <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+        <i class="fas fa-store text-gray-400 text-sm"></i>
+      </div>
+      <input id="reset_store" type="text" placeholder="Kode Store" 
+        class="w-full pl-12 pr-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 outline-none transition-all text-sm">
+    </div>
+    <div class="relative mb-4">
+      <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+        <i class="fas fa-key text-gray-400 text-sm"></i>
+      </div>
+      <input id="new_pass" type="password" placeholder="Password Baru" 
+        class="w-full pl-12 pr-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-400 outline-none transition-all text-sm">
+    </div>
+    <button onclick="resetPassword()" 
+      class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-2.5 rounded-xl hover:shadow-xl transition-all font-semibold flex items-center justify-center gap-2 text-sm">
+      <i class="fas fa-sync-alt"></i>
+      <span>Reset Password</span>
+    </button>
+    <p id="resetMsg" class="text-sm text-gray-600 mt-3"></p>
+  </div>
+  
+  <!-- Toggle Reset Link -->
+  <button onclick="showReset()" class="mt-6 text-sm text-orange-600 hover:text-orange-800 font-medium hover:underline">
+    <i class="fas fa-question-circle"></i> Lupa Password?
+  </button>
+</div>
+
+<script>
+const BASE_URL='https://script.google.com/macros/s/AKfycbzkbIrP2o6-LR2aq2E44dHMmzpdct3Hx_tg6AinU_93o3IYjbtcmtE63Zvh-IbDYQP7Yw/exec';
+
+async function login(){
+  const store_code=document.getElementById("store_code").value.trim();
+  const password=document.getElementById("password").value.trim();
+  const msg=document.getElementById("msg");
+  msg.innerText="Sedang memproses...";
+  const res=await fetch(`${BASE_URL}?action=login&store_code=${store_code}&password=${password}`);
+  const data=await res.json();
+  if(data.success){
+    localStorage.setItem("store_code",data.store_code);
+    localStorage.setItem("store_name",data.store_name);
+    localStorage.setItem("role",data.role);
+    if(data.role.toLowerCase()==="admin") window.location.href="admin.html";
+    else window.location.href="request.html";
+  }else msg.innerText=data.message;
+}
+function showReset(){document.getElementById("resetForm").classList.toggle("hidden");}
+async function resetPassword(){
+  const store_code=document.getElementById("reset_store").value.trim();
+  const new_pass=document.getElementById("new_pass").value.trim();
+  const res=await fetch(BASE_URL,{method:"POST",body:new URLSearchParams({action:"resetPassword",store_code,new_pass})});
+  const data=await res.json();
+  document.getElementById("resetMsg").innerText=data.message;
+}
+</script>
+</body>
+</html>
