@@ -3,375 +3,478 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Octobull - Store Request Form</title>
+<title>Store Request Form</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-  /* Octobull Theme Colors: Orange (#FF6B35), Blue (#004E89), White (#FFFFFF) */
-  @keyframes slideIn {
-    from { opacity: 0; transform: translateX(-20px); }
-    to { opacity: 1; transform: translateX(0); }
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  @keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
-  .animate-slideIn { animation: slideIn 0.5s ease-out; }
-  .animate-fadeIn { animation: fadeIn 0.6s ease-out; }
-  .animate-bounce-slow { animation: bounce 3s ease-in-out infinite; }
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
   
-  .octobull-gradient-header {
-    background: linear-gradient(135deg, #004E89 0%, #1A659E 40%, #FF6B35 80%, #FFA500 100%);
+  * {
+    font-family: 'Poppins', sans-serif;
   }
-  .octobull-bg {
-    background: linear-gradient(to bottom right, #f0f9ff 0%, #ffffff 30%, #fff7ed 70%, #ffffff 100%);
+  
+  /* Octobull Theme Colors */
+  :root {
+    --octobull-orange: #FF6B35;
+    --octobull-blue: #004E89;
+    --octobull-light-blue: #1A759F;
+    --octobull-white: #FFFFFF;
+    --octobull-light: #F7F9FC;
   }
-  .card-shadow {
+  
+  /* Loading Animation */
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--octobull-blue) 0%, var(--octobull-light-blue) 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease-out;
+  }
+  
+  .loading-overlay.fade-out {
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  .octobull-loader {
+    position: relative;
+    width: 120px;
+    height: 120px;
+  }
+  
+  .octobull-circle {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 4px solid transparent;
+    border-top-color: var(--octobull-orange);
+    animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  }
+  
+  .octobull-circle:nth-child(2) {
+    border-top-color: var(--octobull-white);
+    animation-delay: -0.3s;
+    width: 80%;
+    height: 80%;
+    top: 10%;
+    left: 10%;
+  }
+  
+  .octobull-circle:nth-child(3) {
+    border-top-color: var(--octobull-orange);
+    animation-delay: -0.6s;
+    width: 60%;
+    height: 60%;
+    top: 20%;
+    left: 20%;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .loading-text {
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-top: 140px;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  
+  /* Animations */
+  @keyframes slideIn { 
+    from { opacity: 0; transform: translateX(-20px); } 
+    to { opacity: 1; transform: translateX(0); } 
+  }
+  
+  @keyframes fadeIn { 
+    from { opacity: 0; transform: translateY(20px); } 
+    to { opacity: 1; transform: translateY(0); } 
+  }
+  
+  .animate-slideIn { animation: slideIn 0.6s ease-out; }
+  .animate-fadeIn { animation: fadeIn 0.6s ease-out; }
+  
+  /* Header Style */
+  .octobull-header {
+    background: linear-gradient(135deg, var(--octobull-blue) 0%, var(--octobull-light-blue) 100%);
+    box-shadow: 0 6px 30px rgba(0, 78, 137, 0.3);
+  }
+  
+  .octobull-logo-header {
+    width: 55px;
+    height: 55px;
+    background: linear-gradient(135deg, var(--octobull-orange) 0%, #FF8C5A 100%);
+    box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+  }
+  
+  /* Card Styles */
+  .octobull-card {
+    background: white;
     box-shadow: 0 15px 50px rgba(0, 78, 137, 0.15);
-  }
-  .card-hover:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 25px 60px rgba(255, 107, 53, 0.25);
+    border: 2px solid rgba(255, 107, 53, 0.1);
     transition: all 0.4s ease;
   }
-  input:focus, button:focus { outline: none; }
   
-  .octobull-btn-primary {
-    background: linear-gradient(135deg, #FF8C42 0%, #FF6B35 100%);
-  }
-  .octobull-btn-primary:hover {
-    background: linear-gradient(135deg, #FF6B35 0%, #F94144 100%);
-    transform: translateY(-3px);
-    box-shadow: 0 15px 35px rgba(255, 107, 53, 0.5);
-  }
-  .octobull-btn-secondary {
-    background: linear-gradient(135deg, #1A659E 0%, #004E89 100%);
-  }
-  .octobull-btn-secondary:hover {
-    background: linear-gradient(135deg, #004E89 0%, #003566 100%);
-    transform: translateY(-3px);
-    box-shadow: 0 15px 35px rgba(0, 78, 137, 0.5);
-  }
-  .octobull-btn-success {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  }
-  .octobull-btn-success:hover {
-    background: linear-gradient(135deg, #059669 0%, #047857 100%);
-    transform: translateY(-3px);
-    box-shadow: 0 15px 35px rgba(16, 185, 129, 0.5);
+  .octobull-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 25px 60px rgba(0, 78, 137, 0.2);
   }
   
-  .badge-pending { 
-    background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%); 
-    color: white;
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-weight: 700;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  .badge-approved { 
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
-    color: white;
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-weight: 700;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  .badge-rejected { 
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); 
-    color: white;
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-weight: 700;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  
-  .table-header {
-    background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
-    color: #004E89;
-    font-weight: 700;
-  }
-  .octobull-border {
-    border: 3px solid #e0f2fe;
-  }
-  .octobull-input {
-    border: 2px solid #e0f2fe;
+  /* Button Styles */
+  .btn-octobull-orange {
+    background: linear-gradient(135deg, var(--octobull-orange) 0%, #FF8C5A 100%);
+    box-shadow: 0 6px 20px rgba(255, 107, 53, 0.3);
     transition: all 0.3s ease;
   }
-  .octobull-input:focus {
-    border-color: #FF6B35;
-    ring-color: rgba(255, 107, 53, 0.3);
-    transform: scale(1.01);
+  
+  .btn-octobull-orange:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(255, 107, 53, 0.4);
   }
-  .octobull-logo-text {
-    font-family: 'Arial Black', sans-serif;
-    font-weight: 900;
-    background: linear-gradient(135deg, #FF6B35 0%, #FFA500 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  
+  .btn-octobull-blue {
+    background: linear-gradient(135deg, var(--octobull-blue) 0%, var(--octobull-light-blue) 100%);
+    box-shadow: 0 6px 20px rgba(0, 78, 137, 0.3);
+    transition: all 0.3s ease;
   }
-  .icon-box {
-    background: linear-gradient(135deg, #FF6B35 0%, #FFA500 100%);
+  
+  .btn-octobull-blue:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0, 78, 137, 0.4);
   }
-  .icon-box-blue {
-    background: linear-gradient(135deg, #1A659E 0%, #004E89 100%);
+  
+  .btn-octobull-green {
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+    transition: all 0.3s ease;
+  }
+  
+  .btn-octobull-green:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(16, 185, 129, 0.4);
+  }
+  
+  /* Input Styles */
+  input, select {
+    border: 2px solid #E5E7EB;
+    transition: all 0.3s ease;
+  }
+  
+  input:focus, select:focus {
+    border-color: var(--octobull-orange);
+    box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.1);
+    outline: none;
+    transform: scale(1.02);
+  }
+  
+  /* Table Styles */
+  .octobull-table-header {
+    background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+  }
+  
+  .octobull-table tbody tr:hover {
+    background: linear-gradient(90deg, rgba(255, 107, 53, 0.05) 0%, rgba(0, 78, 137, 0.05) 100%);
+  }
+  
+  /* Badge Styles */
+  .badge-pending {
+    background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.75rem;
+    box-shadow: 0 4px 10px rgba(251, 191, 36, 0.3);
+  }
+  
+  .badge-approved {
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.75rem;
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+  }
+  
+  .badge-rejected {
+    background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.75rem;
+    box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
+  }
+  
+  /* Item List Dropdown */
+  #itemList {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.98);
+  }
+  
+  #itemList div:hover {
+    background: linear-gradient(90deg, rgba(255, 107, 53, 0.1) 0%, rgba(0, 78, 137, 0.1) 100%);
+  }
+  
+  /* Ticket Card */
+  .ticket-card {
+    background: linear-gradient(135deg, rgba(255, 107, 53, 0.05) 0%, rgba(0, 78, 137, 0.05) 100%);
+    border: 2px solid rgba(255, 107, 53, 0.2);
+    transition: all 0.3s ease;
+  }
+  
+  .ticket-card:hover {
+    border-color: var(--octobull-orange);
+    transform: translateX(5px);
+    box-shadow: 0 8px 25px rgba(255, 107, 53, 0.2);
   }
 </style>
 </head>
-<body class="octobull-bg min-h-screen">
+<body class="bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen">
 
-<!-- Header -->
-<div class="octobull-gradient-header text-white px-6 py-6 shadow-2xl">
-  <div class="max-w-5xl mx-auto flex justify-between items-center">
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div style="text-align: center;">
+    <div class="octobull-loader">
+      <div class="octobull-circle"></div>
+      <div class="octobull-circle"></div>
+      <div class="octobull-circle"></div>
+    </div>
+    <div class="loading-text">Loading Request System...</div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="octobull-header text-white px-6 py-6 shadow-xl">
+  <div class="max-w-4xl mx-auto flex justify-between items-center">
     <div class="flex items-center gap-4">
-      <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm shadow-xl animate-bounce-slow">
+      <div class="octobull-logo-header rounded-2xl flex items-center justify-center backdrop-blur-sm">
         <i class="fas fa-box-open text-3xl"></i>
       </div>
       <div>
-        <h1 class="text-3xl font-black tracking-wide">OCTOBULL</h1>
-        <h2 class="text-xl font-bold">Form Request Barang</h2>
-        <p class="text-sm text-white/90 font-medium">Procurement Management System</p>
+        <h2 class="text-3xl font-bold">Octobull Request</h2>
+        <p class="text-base text-white opacity-90 font-medium">Procurement Management System</p>
       </div>
     </div>
-    <button onclick="logout()" class="flex items-center gap-3 bg-white/20 hover:bg-white/30 px-6 py-3 rounded-2xl transition-all backdrop-blur-sm shadow-lg hover:shadow-xl font-bold">
-      <i class="fas fa-sign-out-alt text-xl"></i>
+    <button onclick="logout()" 
+      class="flex items-center gap-3 bg-white/20 hover:bg-white/30 px-5 py-3 rounded-xl transition-all backdrop-blur-sm font-bold">
+      <i class="fas fa-sign-out-alt"></i>
       <span>Logout</span>
     </button>
   </div>
 </div>
 
-<div class="max-w-5xl mx-auto py-10 px-4">
-  
-  <!-- Form Tambah Item -->
-  <div class="bg-white shadow-2xl rounded-3xl p-10 mb-10 card-shadow animate-slideIn card-hover octobull-border">
-    <div class="flex items-center gap-4 mb-8">
-      <div class="w-14 h-14 icon-box rounded-2xl flex items-center justify-center shadow-lg">
-        <i class="fas fa-plus text-white text-2xl"></i>
+<div class="max-w-4xl mx-auto py-8 px-4">
+  <!-- FORM REQUEST -->
+  <div class="octobull-card rounded-3xl p-8 mb-8 animate-slideIn">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
+        <i class="fas fa-plus text-white text-xl"></i>
       </div>
-      <div>
-        <h3 class="text-2xl font-black text-gray-800">Tambah Item Request</h3>
-        <p class="text-sm text-gray-600 font-medium">Pilih item dan isi detail permintaan</p>
-      </div>
+      <h3 class="text-2xl font-bold" style="color: var(--octobull-blue);">Tambah Item Request</h3>
     </div>
-    
-    <div class="grid grid-cols-5 gap-5 items-end mb-8">
+
+    <div class="grid grid-cols-5 gap-4 items-end mb-6">
       <div class="col-span-2 relative">
-        <label class="block text-sm font-bold text-gray-700 mb-3">
-          <i class="fas fa-search text-blue-600 mr-1"></i> Cari Item
+        <label class="block text-sm font-bold mb-2" style="color: var(--octobull-blue);">
+          <i class="fas fa-search" style="color: var(--octobull-orange);"></i> Cari Item
         </label>
-        <input type="text" id="itemSearch" placeholder="Ketik nama item..." 
-          class="octobull-input w-full p-4 rounded-2xl focus:ring-4 focus:ring-orange-200 outline-none font-medium shadow-sm" 
+        <input type="text" id="itemSearch" placeholder="Ketik untuk mencari..." 
+          class="w-full p-4 rounded-xl font-medium" 
           oninput="filterItems(this.value)">
-        <div id="itemList" class="absolute bg-white border-2 border-blue-200 rounded-2xl shadow-2xl hidden z-10 w-full max-h-48 overflow-auto mt-2"></div>
+        <div id="itemList" class="absolute border-2 rounded-xl shadow-2xl hidden z-10 w-full max-h-40 overflow-auto mt-2"></div>
       </div>
       <div>
-        <label class="block text-sm font-bold text-gray-700 mb-3">
-          <i class="fas fa-hashtag text-orange-600 mr-1"></i> Qty
+        <label class="block text-sm font-bold mb-2" style="color: var(--octobull-blue);">
+          <i class="fas fa-hashtag" style="color: var(--octobull-orange);"></i> Qty
         </label>
         <input type="number" id="qty" placeholder="0" 
-          class="octobull-input w-full p-4 rounded-2xl focus:ring-4 focus:ring-green-200 outline-none font-bold text-center text-lg shadow-sm">
+          class="w-full p-4 rounded-xl font-bold text-center">
       </div>
       <div>
-        <label class="block text-sm font-bold text-gray-700 mb-3">
-          <i class="fas fa-comment text-yellow-600 mr-1"></i> Remarks
+        <label class="block text-sm font-bold mb-2" style="color: var(--octobull-blue);">
+          <i class="fas fa-comment" style="color: var(--octobull-orange);"></i> Remarks
         </label>
         <input type="text" id="remarks" placeholder="Catatan..." 
-          class="octobull-input w-full p-4 rounded-2xl focus:ring-4 focus:ring-yellow-200 outline-none font-medium shadow-sm">
+          class="w-full p-4 rounded-xl font-medium">
       </div>
       <button onclick="addItem()" 
-        class="octobull-btn-primary text-white rounded-2xl py-4 px-6 font-bold transition-all flex items-center justify-center gap-2 shadow-xl text-base">
-        <i class="fas fa-plus-circle text-xl"></i>
-        <span>TAMBAH</span>
+        class="btn-octobull-orange text-white rounded-xl py-4 px-6 font-bold flex items-center justify-center gap-2">
+        <i class="fas fa-plus-circle"></i><span>Tambah</span>
       </button>
     </div>
 
-    <div class="overflow-x-auto rounded-2xl octobull-border">
+    <div class="overflow-x-auto rounded-xl border-2 shadow-lg" style="border-color: rgba(255, 107, 53, 0.2);">
       <table id="requestTable" class="w-full">
-        <thead class="table-header">
+        <thead class="octobull-table-header">
           <tr>
-            <th class="px-5 py-4 text-left"><i class="fas fa-box mr-2"></i>Item Name</th>
-            <th class="px-5 py-4 text-left"><i class="fas fa-sort-numeric-up mr-2"></i>Quantity</th>
-            <th class="px-5 py-4 text-left"><i class="fas fa-comment-dots mr-2"></i>Remarks</th>
-            <th class="px-5 py-4 text-center"><i class="fas fa-cog mr-2"></i>Action</th>
+            <th class="px-5 py-4 text-left font-bold" style="color: var(--octobull-blue);">Item</th>
+            <th class="px-5 py-4 text-left font-bold" style="color: var(--octobull-blue);">Qty</th>
+            <th class="px-5 py-4 text-left font-bold" style="color: var(--octobull-blue);">Remarks</th>
+            <th class="px-5 py-4 text-center font-bold" style="color: var(--octobull-blue);">Aksi</th>
           </tr>
         </thead>
         <tbody></tbody>
       </table>
     </div>
 
-    <button onclick="submitRequest()" 
-      class="octobull-btn-success mt-8 w-full text-white py-5 rounded-2xl hover:shadow-2xl transition-all font-black text-xl flex items-center justify-center gap-4 shadow-xl">
-      <i class="fas fa-paper-plane text-2xl"></i>
-      <span>SUBMIT REQUEST</span>
+    <button id="submitBtn" onclick="submitRequest()" 
+      class="btn-octobull-green mt-6 w-full text-white py-5 rounded-xl font-extrabold text-lg flex items-center justify-center gap-3">
+      <i class="fas fa-paper-plane"></i><span>Kirim Request</span>
     </button>
-    <p id="msg" class="text-center text-base mt-5 font-bold"></p>
+    <p id="msg" class="text-center text-sm mt-4 font-bold"></p>
   </div>
 
-  <!-- Ticket List -->
-  <div class="bg-white shadow-2xl rounded-3xl p-10 card-shadow animate-fadeIn card-hover octobull-border">
-    <div class="flex items-center gap-4 mb-8">
-      <div class="w-14 h-14 icon-box-blue rounded-2xl flex items-center justify-center shadow-lg">
-        <i class="fas fa-ticket-alt text-white text-2xl"></i>
+  <!-- LIST TICKET -->
+  <div class="octobull-card rounded-3xl p-8 animate-fadeIn">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center shadow-lg">
+        <i class="fas fa-ticket-alt text-white text-xl"></i>
       </div>
-      <div>
-        <h3 class="text-2xl font-black text-gray-800">Daftar Ticket Saya</h3>
-        <p class="text-sm text-gray-600 font-medium">Riwayat permintaan barang</p>
-      </div>
+      <h3 class="text-2xl font-bold" style="color: var(--octobull-blue);">Daftar Ticket Saya</h3>
     </div>
     <ul id="ticketList" class="space-y-4"></ul>
-    <div id="ticketDetail" class="mt-8"></div>
+    <div id="ticketDetail" class="mt-6"></div>
   </div>
 </div>
 
 <script>
-const BASE_URL = 'https://script.google.com/macros/s/AKfycby9VgDwNbtMeXGLMCG-eTpkAgSomw8JndpDxZ0NPS1NYb-iexn4Vaj1-9aIfAoxV2A9OA/exec';
-const store_code = localStorage.getItem("store_code");
+// Hide loading overlay after page load
+window.addEventListener('load', function() {
+  setTimeout(() => {
+    document.getElementById('loadingOverlay').classList.add('fade-out');
+  }, 1200);
+});
+
+const BASE_URL='https://script.google.com/macros/s/AKfycbylUW-XSL7i-hzFb6PjMmy_T-zYWUaZ8lnGpHsGUiklZ5mDQBo9zHJ8vJFfmwA5SMQNGQ/exec';
+const store_code=localStorage.getItem("store_code");
 if(!store_code) window.location.href="login.html";
+let items=[],selectedItems=[];
 
-let items=[], selectedItems=[];
+async function loadItems(){
+  try{
+    const res=await fetch(`${BASE_URL}?action=getItems`,{cache:"no-cache"});
+    items=await res.json();
+  }catch(e){console.error("Gagal load items",e);}
+}
 
-async function loadItems(){ const res=await fetch(`${BASE_URL}?action=getItems`); items=await res.json(); }
-function filterItems(value){
+function filterItems(v){
   const list=document.getElementById("itemList");
   list.innerHTML="";
-  if(!value) return list.classList.add("hidden");
-  const filtered=items.filter(it=>it.item_name.toLowerCase().includes(value.toLowerCase()));
+  if(!v)return list.classList.add("hidden");
+  const filtered=items.filter(it=>it.item_name.toLowerCase().includes(v.toLowerCase()));
   filtered.slice(0,5).forEach(it=>{
     const div=document.createElement("div");
-    div.innerHTML=`<i class="fas fa-cube text-orange-500 mr-2"></i><span class="font-semibold">${it.item_id}</span> - ${it.item_name}`;
-    div.className="p-4 hover:bg-blue-50 cursor-pointer transition-colors border-b last:border-b-0 font-medium";
+    div.innerHTML=`<i class='fas fa-cube mr-2' style='color: var(--octobull-orange);'></i>${it.item_id} - ${it.item_name}`;
+    div.className="p-4 cursor-pointer border-b last:border-b-0 font-medium";
     div.onclick=()=>selectItem(it);
     list.appendChild(div);
   });
   list.classList.remove("hidden");
 }
+
 function selectItem(it){
-  document.getElementById("itemSearch").value=it.item_name;
-  document.getElementById("itemSearch").dataset.itemId=it.item_id;
+  const input=document.getElementById("itemSearch");
+  input.value=it.item_name;
+  input.dataset.itemId=it.item_id;
+  input.dataset.category=it.category||"";
   document.getElementById("itemList").classList.add("hidden");
 }
+
 function addItem(){
-  const item_name=document.getElementById("itemSearch").value;
-  const item_id=document.getElementById("itemSearch").dataset.itemId;
+  const input=document.getElementById("itemSearch");
+  const item_name=input.value;
+  const item_id=input.dataset.itemId;
+  const category=input.dataset.category||"";
   const qty=document.getElementById("qty").value;
   const remarks=document.getElementById("remarks").value;
-  if(!item_id||!qty)return alert("⚠️ Pilih item dan isi qty!");
-  selectedItems.push({item_id,item_name,qty,remarks});
+  if(!item_id||!qty)return alert("Pilih item dan isi qty!");
+  selectedItems.push({item_id,item_name,qty,remarks,category});
   renderTable();
-  document.getElementById("itemSearch").value="";
-  document.getElementById("qty").value="";
-  document.getElementById("remarks").value="";
+  input.value="";document.getElementById("qty").value="";document.getElementById("remarks").value="";
 }
+
 function renderTable(){
   const tbody=document.querySelector("#requestTable tbody");
   tbody.innerHTML="";
   selectedItems.forEach((it,idx)=>{
-    tbody.innerHTML+=`<tr class="border-b hover:bg-orange-50 transition-colors">
-      <td class="px-5 py-4 font-semibold text-gray-800">${it.item_name}</td>
-      <td class="px-5 py-4 font-black text-orange-600 text-lg">${it.qty}</td>
-      <td class="px-5 py-4 text-gray-700">${it.remarks}</td>
-      <td class="px-5 py-4 text-center">
-        <button onclick="removeItem(${idx})" class="text-red-600 hover:text-white hover:bg-red-600 px-4 py-2 rounded-xl transition-all font-bold shadow-sm hover:shadow-md">
-          <i class="fas fa-trash-alt mr-1"></i>Hapus
-        </button>
-      </td>
-    </tr>`;
+    tbody.innerHTML+=`<tr class='border-b octobull-table'><td class='px-5 py-4 font-semibold'>${it.item_name}</td><td class='px-5 py-4 font-bold' style='color: var(--octobull-orange);'>${it.qty}</td><td class='px-5 py-4 text-gray-600'>${it.remarks}</td><td class='px-5 py-4 text-center'><button onclick='removeItem(${idx})' class='text-red-500 hover:text-red-700 font-bold'><i class='fas fa-trash mr-2'></i>Hapus</button></td></tr>`;
   });
 }
+
 function removeItem(i){selectedItems.splice(i,1);renderTable();}
+
 async function submitRequest(){
-  if(selectedItems.length===0)return alert("⚠️ Tambahkan minimal satu item!");
+  if(selectedItems.length===0)return alert("Tambahkan minimal satu item!");
+  const btn=document.getElementById("submitBtn");
   const msg=document.getElementById("msg");
-  msg.innerText="⏳ Mengirim request...";
-  msg.className="text-center text-base mt-5 font-bold text-blue-600";
-  const res=await fetch(`${BASE_URL}?action=submitRequest&store_code=${store_code}&items=${encodeURIComponent(JSON.stringify(selectedItems))}`);
-  const data=await res.json();
-  if(data.success){
-    msg.innerText=`✅ Berhasil dikirim! Ticket ID: ${data.ticket_id}`;
-    msg.className="text-center text-base mt-5 font-bold text-green-600";
-    selectedItems=[];
-    renderTable();
-    loadTickets();
-  } else {
-    msg.innerText="❌ Gagal submit request.";
-    msg.className="text-center text-base mt-5 font-bold text-red-600";
+  btn.disabled=true;btn.innerHTML="<i class='fas fa-spinner fa-spin'></i> Mengirim...";
+  msg.innerText="";
+  try{
+    const res=await fetch(BASE_URL,{
+      method:"POST",
+      headers:{"Content-Type":"application/x-www-form-urlencoded"},
+      body:new URLSearchParams({
+        action:"submitRequest",
+        store_code,
+        items:JSON.stringify(selectedItems)
+      })
+    });
+    const data=await res.json();
+    if(data.success){
+      msg.innerText=`Berhasil dikirim! Ticket ID: ${data.ticket_id}`;
+      msg.className="text-center text-sm mt-4 font-bold text-green-600";
+      selectedItems=[];renderTable();loadTickets();
+    }else throw new Error("submit failed");
+  }catch(e){
+    console.error(e);
+    msg.innerText="Terjadi kesalahan koneksi. Silakan coba lagi.";
+    msg.className="text-center text-sm mt-4 font-bold text-red-600";
   }
+  btn.disabled=false;btn.innerHTML='<i class="fas fa-paper-plane"></i><span>Kirim Request</span>';
 }
+
 async function loadTickets(){
-  const res=await fetch(`${BASE_URL}?action=getRequests&store_code=${store_code}`);
-  const data=await res.json();
-  const ticketList=document.getElementById("ticketList");
-  ticketList.innerHTML="";
-  const uniqueTickets=[...new Set(data.map(r=>r.ticket_id))];
-  uniqueTickets.forEach(t=>{
-    const ticketData=data.filter(r=>r.ticket_id===t);
-    const status=ticketData[0].status||"Pending";
-    const div=document.createElement("div");
-    div.className="p-6 bg-gradient-to-r from-blue-50 via-white to-orange-50 border-3 border-blue-200 rounded-2xl hover:border-orange-400 hover:shadow-2xl cursor-pointer transition-all";
-    div.innerHTML=`<div class="flex items-center justify-between">
-        <div class="flex items-center gap-4">
-          <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-            <i class="fas fa-ticket-alt text-white text-xl"></i>
-          </div>
-          <div>
-            <span class="font-black text-gray-800 text-lg">Ticket #${t}</span>
-            <p class="text-xs text-gray-600 font-medium">${ticketData.length} item(s)</p>
-          </div>
-        </div>
-        <span class="${status==='Approved'?'badge-approved':status==='Rejected'?'badge-rejected':'badge-pending'}">${status}</span>
-      </div>`;
-    div.onclick=()=>showTicketDetail(t,ticketData);
-    ticketList.appendChild(div);
-  });
+  try{
+    const res=await fetch(`${BASE_URL}?action=getRequests&store_code=${store_code}`,{cache:"no-cache"});
+    const data=await res.json();
+    const ticketList=document.getElementById("ticketList");
+    ticketList.innerHTML="";
+    const uniqueTickets=[...new Set(data.map(r=>r.ticket_id))];
+    uniqueTickets.forEach(t=>{
+      const tData=data.filter(r=>r.ticket_id===t);
+      const st=tData[0].status||"Pending";
+      const div=document.createElement("div");
+      div.className="ticket-card p-5 rounded-2xl cursor-pointer";
+      div.innerHTML=`<div class='flex justify-between items-center'><div class='flex items-center gap-3'><i class='fas fa-ticket-alt text-2xl' style='color: var(--octobull-orange);'></i><span class='font-bold text-lg' style='color: var(--octobull-blue);'>Ticket #${t}</span></div><span class='${st==='Approved'?'badge-approved':st==='Rejected'?'badge-rejected':'badge-pending'}'>${st}</span></div>`;
+      div.onclick=()=>showTicketDetail(t,tData);
+      ticketList.appendChild(div);
+    });
+  }catch(e){console.error("loadTickets failed",e);}
 }
+
 function showTicketDetail(id,items){
-  let html=`<div class='p-8 bg-gradient-to-br from-blue-50 via-white to-orange-50 border-3 border-blue-300 rounded-3xl shadow-2xl'>
-    <h4 class='font-black mb-6 text-2xl text-gray-800 flex items-center gap-3'>
-      <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center">
-        <i class="fas fa-clipboard-list text-white"></i>
-      </div>
-      Detail Ticket #${id}
-    </h4>
-    <div class="overflow-x-auto rounded-2xl border-3 border-blue-200">
-      <table class='w-full text-sm'>
-        <thead class="table-header">
-          <tr>
-            <th class="px-4 py-3 text-left"><i class="fas fa-box mr-2"></i>Item</th>
-            <th class="px-4 py-3 text-left"><i class="fas fa-hashtag mr-2"></i>Qty</th>
-            <th class="px-4 py-3 text-left"><i class="fas fa-comment-dots mr-2"></i>Remarks</th>
-            <th class="px-4 py-3 text-left"><i class="fas fa-info-circle mr-2"></i>Status</th>
-            <th class="px-4 py-3 text-left"><i class="fas fa-comment mr-2"></i>Feedback</th>
-          </tr>
-        </thead>
-        <tbody class="bg-white">
-          ${items.map(r=>`<tr class='border-b hover:bg-blue-50'>
-            <td class="px-4 py-3 font-semibold text-gray-800">${r.item_name}</td>
-            <td class="px-4 py-3 font-black text-orange-600 text-base">${r.qty}</td>
-            <td class="px-4 py-3 text-gray-700">${r.remarks}</td>
-            <td class="px-4 py-3"><span class="${
-              r.status==='Approved'?'badge-approved':r.status==='Rejected'?'badge-rejected':'badge-pending'
-            }">${r.status}</span></td>
-            <td class="px-4 py-3 text-gray-700 font-medium">${r.feedback || '-'}</td>
-          </tr>`).join("")}
-        </tbody>
-      </table>
-    </div>
-  </div>`;
+  let html=`<div class='p-6 bg-gradient-to-br from-orange-50 to-blue-50 border-2 rounded-2xl' style='border-color: var(--octobull-orange);'><h4 class='font-bold mb-4 text-xl' style='color: var(--octobull-blue);'><i class='fas fa-clipboard-list mr-2' style='color: var(--octobull-orange);'></i>Detail Ticket #${id}</h4><table class='w-full text-sm'><thead class='octobull-table-header'><tr><th class='p-3 text-left font-bold'>Item</th><th class='p-3 text-left font-bold'>Qty</th><th class='p-3 text-left font-bold'>Remarks</th><th class='p-3 text-left font-bold'>Status</th><th class='p-3 text-left font-bold'>Feedback</th></tr></thead><tbody>${items.map(r=>`<tr class='border-t'><td class='p-3'>${r.item_name}</td><td class='p-3 font-bold' style='color: var(--octobull-orange);'>${r.qty}</td><td class='p-3'>${r.remarks}</td><td class='p-3'><span class='${r.status==='Approved'?'badge-approved':r.status==='Rejected'?'badge-rejected':'badge-pending'}'>${r.status}</span></td><td class='p-3'>${r.feedback||'-'}</td></tr>`).join("")}</tbody></table></div>`;
   document.getElementById("ticketDetail").innerHTML=html;
 }
+
 function logout(){localStorage.clear();window.location.href="login.html";}
-loadItems(); loadTickets();
+loadItems();loadTickets();
 </script>
 </body>
 </html>
