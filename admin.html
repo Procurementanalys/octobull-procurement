@@ -3,376 +3,597 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin - Special Request</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <title>Admin Panel | Procurement System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
     
-    * {
-      font-family: 'Poppins', sans-serif;
+    * { 
+      font-family: 'Inter', sans-serif;
+      scroll-behavior: smooth;
     }
     
-    /* Octobull Theme Colors */
-    :root {
-      --octobull-orange: #FF6B35;
-      --octobull-blue: #004E89;
-      --octobull-light-blue: #1A759F;
-      --octobull-white: #FFFFFF;
-      --octobull-light: #F7F9FC;
+    @keyframes slideDown { 
+      from { opacity: 0; transform: translateY(-20px); } 
+      to { opacity: 1; transform: translateY(0); } 
     }
-    
-    /* Loading Animation */
-    .loading-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, var(--octobull-blue) 0%, var(--octobull-light-blue) 100%);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-      transition: opacity 0.5s ease-out;
+    @keyframes fadeIn { 
+      from { opacity: 0; } 
+      to { opacity: 1; } 
     }
-    
-    .loading-overlay.fade-out {
-      opacity: 0;
-      pointer-events: none;
-    }
-    
-    .octobull-loader {
-      position: relative;
-      width: 120px;
-      height: 120px;
-    }
-    
-    .octobull-circle {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      border: 4px solid transparent;
-      border-top-color: var(--octobull-orange);
-      animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-    }
-    
-    .octobull-circle:nth-child(2) {
-      border-top-color: var(--octobull-white);
-      animation-delay: -0.3s;
-      width: 80%;
-      height: 80%;
-      top: 10%;
-      left: 10%;
-    }
-    
-    .octobull-circle:nth-child(3) {
-      border-top-color: var(--octobull-orange);
-      animation-delay: -0.6s;
-      width: 60%;
-      height: 60%;
-      top: 20%;
-      left: 20%;
-    }
-    
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    
-    .loading-text {
-      color: white;
-      font-size: 1.2rem;
-      font-weight: 600;
-      margin-top: 140px;
-      animation: pulse 1.5s ease-in-out infinite;
-    }
-    
     @keyframes pulse {
       0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
+      50% { opacity: 0.7; }
     }
     
-    /* Header Style */
-    .octobull-header {
-      background: linear-gradient(135deg, var(--octobull-blue) 0%, var(--octobull-light-blue) 100%);
-      box-shadow: 0 4px 20px rgba(0, 78, 137, 0.3);
+    .animate-slideDown { animation: slideDown 0.6s ease-out; }
+    .animate-fadeIn { animation: fadeIn 0.5s ease-out; }
+    .animate-pulse-loading { animation: pulse 1.5s ease-in-out infinite; }
+    
+    .admin-gradient {
+      background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%);
     }
     
-    .octobull-logo-header {
-      width: 45px;
-      height: 45px;
-      background: linear-gradient(135deg, var(--octobull-orange) 0%, #FF8C5A 100%);
-      box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+    .gradient-mesh {
+      background: 
+        radial-gradient(at 10% 20%, rgba(30, 64, 175, 0.1) 0%, transparent 50%),
+        radial-gradient(at 90% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+        linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
     }
     
-    /* Button Styles */
-    .btn-octobull-primary {
-      background: linear-gradient(135deg, var(--octobull-orange) 0%, #FF8C5A 100%);
-      color: white;
-      border: none;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
-    }
-    
-    .btn-octobull-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
-    }
-    
-    .btn-octobull-success {
-      background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-      color: white;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
-    }
-    
-    .btn-octobull-success:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
-    }
-    
-    .btn-octobull-danger {
-      background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
-      color: white;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
-    }
-    
-    .btn-octobull-danger:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
-    }
-    
-    /* Card Style */
-    .octobull-card {
+    .card-premium {
       background: white;
-      border-radius: 16px;
-      box-shadow: 0 10px 40px rgba(0, 78, 137, 0.1);
-      border: 1px solid rgba(255, 107, 53, 0.1);
-    }
-    
-    /* Table Styles */
-    .octobull-table {
-      border-radius: 12px;
-      overflow: hidden;
-    }
-    
-    .octobull-table thead {
-      background: linear-gradient(135deg, var(--octobull-blue) 0%, var(--octobull-light-blue) 100%);
-      color: white;
-    }
-    
-    .octobull-table tbody tr:hover {
-      background: linear-gradient(90deg, rgba(255, 107, 53, 0.05) 0%, rgba(0, 78, 137, 0.05) 100%);
+      box-shadow: 
+        0 0 0 1px rgba(30, 64, 175, 0.08),
+        0 10px 40px rgba(30, 64, 175, 0.06),
+        0 20px 60px rgba(0, 0, 0, 0.04);
+      border-radius: 1.25rem;
       transition: all 0.3s ease;
     }
     
-    /* Input/Select Styles */
-    select, input {
-      border: 2px solid #E5E7EB;
-      transition: all 0.3s ease;
-      border-radius: 8px;
+    .table-container {
+      overflow-x: auto;
+      border-radius: 1rem;
+      scrollbar-width: thin;
+      scrollbar-color: #3b82f6 #e5e7eb;
     }
     
-    select:focus, input:focus {
-      border-color: var(--octobull-orange);
-      box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+    .table-container::-webkit-scrollbar {
+      height: 10px;
+    }
+    
+    .table-container::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 10px;
+    }
+    
+    .table-container::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+      border-radius: 10px;
+    }
+    
+    .table-container::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%);
+    }
+    
+    .row-approved { background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); }
+    .row-rejected { background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); }
+    .row-pending { background: white; }
+    
+    input:focus, select:focus {
       outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
     }
     
-    /* Status Badge */
-    .status-pending {
-      background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
-      color: white;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-weight: 600;
-      font-size: 0.75rem;
+    button {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
-    .status-approved {
-      background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-      color: white;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-weight: 600;
-      font-size: 0.75rem;
+    button:hover {
+      transform: translateY(-2px);
     }
     
-    .status-rejected {
-      background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
-      color: white;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-weight: 600;
-      font-size: 0.75rem;
+    button:active {
+      transform: translateY(0);
     }
+    
+    .pagination-btn {
+      transition: all 0.2s ease;
+    }
+    
+    .pagination-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+    }
+    
+    .pagination-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    
+    .pagination-btn.active {
+      background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+      color: white;
+      font-weight: 800;
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+    }
+    
+    .filter-badge {
+      transition: all 0.2s ease;
+    }
+    
+    .filter-badge:hover {
+      transform: scale(1.05);
+    }
+    
+    .loading-skeleton {
+      background: linear-gradient(90deg, #f1f5f9 0%, #e2e8f0 50%, #f1f5f9 100%);
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+    }
+    
+    @keyframes loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    
+    .status-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 6px;
+    }
+    
+    .status-indicator.pending { background: #f59e0b; box-shadow: 0 0 10px rgba(245, 158, 11, 0.5); }
+    .status-indicator.approved { background: #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
+    .status-indicator.rejected { background: #ef4444; box-shadow: 0 0 10px rgba(239, 68, 68, 0.5); }
   </style>
 </head>
-<body class="bg-gray-50 min-h-screen text-gray-800">
 
-  <!-- Loading Overlay -->
-  <div class="loading-overlay" id="loadingOverlay">
-    <div style="text-align: center;">
-      <div class="octobull-loader">
-        <div class="octobull-circle"></div>
-        <div class="octobull-circle"></div>
-        <div class="octobull-circle"></div>
-      </div>
-      <div class="loading-text">Loading Admin Panel...</div>
-    </div>
-  </div>
+<body class="gradient-mesh min-h-screen">
 
   <!-- HEADER -->
-  <div class="octobull-header text-white px-6 py-5 flex justify-between items-center">
-    <div class="flex items-center gap-4">
-      <div class="octobull-logo-header rounded-xl flex items-center justify-center">
-        <i class="fas fa-shield-alt text-2xl"></i>
-      </div>
-      <div>
-        <h1 class="text-2xl font-bold">Octobull Admin</h1>
-        <p class="text-sm text-white opacity-80">Special Request Management</p>
+  <div class="admin-gradient text-white shadow-2xl animate-slideDown sticky top-0 z-50">
+    <div class="max-w-full px-6 py-6">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-xl border border-white/30 shadow-xl">
+            <i class="fas fa-user-shield text-3xl"></i>
+          </div>
+          <div>
+            <h1 class="text-2xl md:text-3xl font-black tracking-tight">Admin Control Panel</h1>
+            <p class="text-sm text-white/90 font-semibold flex items-center gap-2 mt-1">
+              <i class="fas fa-clipboard-list"></i>
+              <span>Special Request Management System</span>
+            </p>
+          </div>
+        </div>
+        <button 
+          onclick="logout()" 
+          class="flex items-center gap-2 bg-red-500/90 hover:bg-red-600 px-6 py-3 rounded-xl transition-all backdrop-blur-xl border border-white/30 font-bold shadow-lg"
+        >
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Logout</span>
+        </button>
       </div>
     </div>
-    <button onclick="logout()" class="btn-octobull-danger px-5 py-2 rounded-lg font-semibold flex items-center gap-2">
-      <i class="fas fa-sign-out-alt"></i>
-      Logout
-    </button>
   </div>
 
-  <!-- MAIN -->
-  <div class="p-6">
-    <div class="octobull-card p-6">
-      <h2 class="text-2xl font-bold mb-6 flex items-center gap-3" style="color: var(--octobull-blue);">
-        <i class="fas fa-clipboard-list" style="color: var(--octobull-orange);"></i>
-        Daftar Request Per Item
-      </h2>
-
-      <div class="mb-6 flex gap-3 flex-wrap">
-        <select id="filterCategory" class="border px-4 py-3 font-medium">
-          <option value="">Semua Kategori</option>
-        </select>
-
-        <select id="filterStatus" class="border px-4 py-3 font-medium">
-          <option value="">Semua Status</option>
-          <option value="Pending">Pending</option>
-          <option value="Approved">Approved</option>
-          <option value="Rejected">Rejected</option>
-        </select>
-
-        <button onclick="loadItems()" class="btn-octobull-primary px-6 py-3 rounded-lg font-semibold flex items-center gap-2">
-          <i class="fas fa-sync-alt"></i>
-          Tampilkan
-        </button>
-        
-        <button onclick="exportExcel()" class="btn-octobull-success px-6 py-3 rounded-lg font-semibold flex items-center gap-2">
-          <i class="fas fa-file-excel"></i>
-          Export XLSX
-        </button>
+  <!-- MAIN CONTENT -->
+  <div class="max-w-full p-4 md:p-6 animate-fadeIn">
+    
+    <!-- FILTERS & ACTIONS -->
+    <div class="card-premium p-6 mb-6">
+      <div class="flex items-center gap-3 mb-6 pb-4 border-b-2 border-gray-100">
+        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl flex items-center justify-center shadow-lg">
+          <i class="fas fa-filter text-white"></i>
+        </div>
+        <h2 class="text-xl font-black text-gray-800">Filter & Export Data</h2>
       </div>
 
-      <div class="overflow-auto octobull-table shadow-lg">
-        <table class="w-full text-sm">
-          <thead>
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+        <!-- CATEGORY FILTER -->
+        <div class="md:col-span-3">
+          <label class="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
+            <i class="fas fa-tags text-purple-500"></i>
+            <span>Kategori</span>
+          </label>
+          <select 
+            id="filterCategory" 
+            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl transition-all font-semibold text-gray-700"
+          >
+            <option value="">Semua Kategori</option>
+          </select>
+        </div>
+
+        <!-- STATUS FILTER -->
+        <div class="md:col-span-3">
+          <label class="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
+            <i class="fas fa-list-check text-green-500"></i>
+            <span>Status</span>
+          </label>
+          <select 
+            id="filterStatus" 
+            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl transition-all font-semibold text-gray-700"
+          >
+            <option value="">Semua Status</option>
+            <option value="Pending">Pending</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+        </div>
+
+        <!-- BUTTONS -->
+        <div class="md:col-span-3">
+          <button 
+            onclick="loadItems()" 
+            class="w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:shadow-2xl flex items-center justify-center gap-2"
+          >
+            <i class="fas fa-search"></i>
+            <span>Tampilkan Data</span>
+          </button>
+        </div>
+
+        <div class="md:col-span-3">
+          <button 
+            onclick="exportExcel()" 
+            class="w-full bg-gradient-to-r from-green-500 to-green-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:shadow-2xl flex items-center justify-center gap-2"
+          >
+            <i class="fas fa-file-excel"></i>
+            <span>Export XLSX</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ACTIVE FILTERS DISPLAY -->
+      <div id="activeFilters" class="mt-4 flex flex-wrap gap-2"></div>
+    </div>
+
+    <!-- DATA TABLE -->
+    <div class="card-premium p-6">
+      <div class="flex justify-between items-center mb-6 pb-4 border-b-2 border-gray-100">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+            <i class="fas fa-table text-white"></i>
+          </div>
+          <div>
+            <h2 class="text-xl font-black text-gray-800">Daftar Request Per Item</h2>
+            <p class="text-sm text-gray-500 font-semibold" id="dataCount">Loading...</p>
+          </div>
+        </div>
+        
+        <!-- PAGINATION INFO -->
+        <div class="text-sm font-bold text-gray-600" id="pageInfo">
+          <i class="fas fa-file-alt mr-2"></i>Halaman 1
+        </div>
+      </div>
+
+      <!-- TABLE -->
+      <div class="table-container border-2 border-gray-200 mb-6">
+        <table class="w-full text-sm min-w-[1400px]">
+          <thead class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white sticky top-0">
             <tr>
-              <th class="p-3 text-left font-bold">Ticket ID</th>
-              <th class="p-3 text-left font-bold">Store</th>
-              <th class="p-3 text-left font-bold">Item ID</th>
-              <th class="p-3 text-left font-bold">Item Name</th>
-              <th class="p-3 text-left font-bold">Qty</th>
-              <th class="p-3 text-left font-bold">Remarks</th>
-              <th class="p-3 text-left font-bold">Procurement Officer</th>
-              <th class="p-3 text-left font-bold">Status</th>
-              <th class="p-3 text-left font-bold">Feedback</th>
-              <th class="p-3 text-left font-bold">Created At</th>
-              <th class="p-3 text-center font-bold">Action</th>
+              <th class="px-4 py-4 text-left font-black whitespace-nowrap">
+                <i class="fas fa-hashtag mr-2"></i>Ticket ID
+              </th>
+              <th class="px-4 py-4 text-left font-black whitespace-nowrap">
+                <i class="fas fa-store mr-2"></i>Store
+              </th>
+              <th class="px-4 py-4 text-left font-black whitespace-nowrap">
+                <i class="fas fa-barcode mr-2"></i>Item ID
+              </th>
+              <th class="px-4 py-4 text-left font-black whitespace-nowrap">
+                <i class="fas fa-box mr-2"></i>Item Name
+              </th>
+              <th class="px-4 py-4 text-center font-black whitespace-nowrap">
+                <i class="fas fa-boxes mr-2"></i>Qty
+              </th>
+              <th class="px-4 py-4 text-left font-black whitespace-nowrap">
+                <i class="fas fa-comment mr-2"></i>Remarks
+              </th>
+              <th class="px-4 py-4 text-left font-black whitespace-nowrap">
+                <i class="fas fa-tags mr-2"></i>Category
+              </th>
+              <th class="px-4 py-4 text-center font-black whitespace-nowrap">
+                <i class="fas fa-info-circle mr-2"></i>Status
+              </th>
+              <th class="px-4 py-4 text-left font-black whitespace-nowrap">
+                <i class="fas fa-reply mr-2"></i>Feedback
+              </th>
+              <th class="px-4 py-4 text-left font-black whitespace-nowrap">
+                <i class="fas fa-calendar mr-2"></i>Created At
+              </th>
+              <th class="px-4 py-4 text-center font-black whitespace-nowrap">
+                <i class="fas fa-cog mr-2"></i>Action
+              </th>
             </tr>
           </thead>
-          <tbody id="itemList" class="bg-white"></tbody>
+          <tbody id="itemList"></tbody>
         </table>
       </div>
+
+      <!-- PAGINATION CONTROLS -->
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="flex items-center gap-2">
+          <button 
+            onclick="goToPage(currentPage - 1)" 
+            id="prevBtn"
+            class="pagination-btn px-5 py-3 border-2 border-gray-300 rounded-xl font-bold text-gray-700 disabled:opacity-40"
+          >
+            <i class="fas fa-chevron-left mr-2"></i>Previous
+          </button>
+          
+          <div id="pageButtons" class="flex gap-2"></div>
+          
+          <button 
+            onclick="goToPage(currentPage + 1)" 
+            id="nextBtn"
+            class="pagination-btn px-5 py-3 border-2 border-gray-300 rounded-xl font-bold text-gray-700 disabled:opacity-40"
+          >
+            Next<i class="fas fa-chevron-right ml-2"></i>
+          </button>
+        </div>
+        
+        <div class="text-sm font-bold text-gray-600">
+          <span id="itemRange">0-0</span> dari <span id="totalItems">0</span> items
+        </div>
+      </div>
     </div>
+
   </div>
 
   <script>
-    // Hide loading overlay after page load
-    window.addEventListener('load', function() {
-      setTimeout(() => {
-        document.getElementById('loadingOverlay').classList.add('fade-out');
-      }, 1000);
-    });
-
-    const BASE_URL = "https://script.google.com/macros/s/AKfycbwkPR-kE4bLNDg6NxuY53z7W8YgSoXssbKploTjPG9Xj_uLTsUzz6quQuLKBZEdxCP18Q/exec"; 
+    const BASE_URL = "https://script.google.com/macros/s/AKfycbylUW-XSL7i-hzFb6PjMmy_T-zYWUaZ8lnGpHsGUiklZ5mDQBo9zHJ8vJFfmwA5SMQNGQ/exec";
+    
     let currentCategory = "";
     let currentStatus = "";
+    let allData = [];
+    let currentPage = 1;
+    const itemsPerPage = 20;
+    let totalPages = 1;
 
+    // Load Categories
     async function loadCategories() {
-      const r = await fetch(`${BASE_URL}?action=getCategories`);
-      const data = await r.json();
-      const select = document.getElementById("filterCategory");
-      data.forEach(cat => {
-        select.innerHTML += `<option value="${cat}">${cat}</option>`;
-      });
+      try {
+        const r = await fetch(`${BASE_URL}?action=getCategories`);
+        const data = await r.json();
+        const select = document.getElementById("filterCategory");
+        
+        data.forEach(cat => {
+          select.innerHTML += `<option value="${cat}">${cat}</option>`;
+        });
+      } catch (e) {
+        console.error("Failed to load categories", e);
+      }
     }
 
+    // Load Items with Filters
     async function loadItems() {
       const filterCategory = document.getElementById("filterCategory").value;
       const filterStatus = document.getElementById("filterStatus").value;
       currentCategory = filterCategory;
       currentStatus = filterStatus;
-
-      const r = await fetch(
-        `${BASE_URL}?action=getRequests&filter_category=${filterCategory}&filter_status=${filterStatus}`
-      );
-
-      const data = await r.json();
+      
+      // Show loading state
       const tbody = document.getElementById("itemList");
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="11" class="px-4 py-12 text-center">
+            <div class="animate-pulse-loading">
+              <i class="fas fa-spinner fa-spin text-4xl text-blue-500 mb-3"></i>
+              <p class="font-bold text-gray-600">Memuat data...</p>
+            </div>
+          </td>
+        </tr>
+      `;
+      
+      try {
+        const r = await fetch(
+          `${BASE_URL}?action=getRequests&filter_category=${filterCategory}&filter_status=${filterStatus}`
+        );
+        
+        allData = await r.json();
+        currentPage = 1;
+        totalPages = Math.ceil(allData.length / itemsPerPage);
+        
+        updateActiveFilters();
+        renderPage();
+        updatePagination();
+      } catch (e) {
+        console.error("Failed to load items", e);
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="11" class="px-4 py-12 text-center">
+              <i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-3"></i>
+              <p class="font-bold text-gray-600">Gagal memuat data. Silakan coba lagi.</p>
+            </td>
+          </tr>
+        `;
+      }
+    }
+
+    // Render Current Page
+    function renderPage() {
+      const tbody = document.getElementById("itemList");
+      const start = (currentPage - 1) * itemsPerPage;
+      const end = start + itemsPerPage;
+      const pageData = allData.slice(start, end);
+      
       tbody.innerHTML = "";
-
-      data.forEach(it => {
+      
+      if (pageData.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="11" class="px-4 py-12 text-center">
+              <i class="fas fa-inbox text-4xl text-gray-400 mb-3"></i>
+              <p class="font-bold text-gray-600">Tidak ada data yang ditampilkan</p>
+              <p class="text-sm text-gray-500 mt-1">Coba ubah filter Anda</p>
+            </td>
+          </tr>
+        `;
+        document.getElementById("dataCount").textContent = "0 items ditemukan";
+        return;
+      }
+      
+      pageData.forEach(it => {
         const rowColor =
-          it.status === "Approved" ? "bg-green-50" :
-          it.status === "Rejected" ? "bg-red-50" :
-          "bg-white";
-
-        const statusBadge = 
-          it.status === "Approved" ? "status-approved" :
-          it.status === "Rejected" ? "status-rejected" :
-          "status-pending";
+          it.status === "Approved" ? "row-approved" :
+          it.status === "Rejected" ? "row-rejected" :
+          "row-pending";
+        
+        const statusIndicator =
+          it.status === "Approved" ? "approved" :
+          it.status === "Rejected" ? "rejected" :
+          "pending";
 
         tbody.innerHTML += `
-          <tr class="border-b ${rowColor}">
-            <td class="p-3 border font-semibold" style="color: var(--octobull-blue);">${it.ticket_id}</td>
-            <td class="p-3 border">${it.store_name}</td>
-            <td class="p-3 border font-mono text-xs">${it.item_id}</td>
-            <td class="p-3 border">${it.item_name}</td>
-            <td class="p-3 border text-center font-bold" style="color: var(--octobull-orange);">${it.qty}</td>
-            <td class="p-3 border text-gray-600">${it.remarks || "-"}</td>
-            <td class="p-3 border"><span class="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-semibold">${it.category || "-"}</span></td>
-            <td class="p-3 border">
-              <select id="status_${it.ticket_id}_${it.item_id}" class="border rounded p-2 w-full font-semibold text-sm">
+          <tr class="border-b hover:shadow-lg transition-all ${rowColor}">
+            <td class="px-4 py-4 font-bold text-gray-800 whitespace-nowrap">#${it.ticket_id}</td>
+            <td class="px-4 py-4 font-semibold text-gray-700 whitespace-nowrap">
+              <i class="fas fa-store-alt text-blue-500 mr-2"></i>${it.store_name}
+            </td>
+            <td class="px-4 py-4 font-mono text-gray-600 whitespace-nowrap">${it.item_id}</td>
+            <td class="px-4 py-4 font-semibold text-gray-800 whitespace-nowrap">${it.item_name}</td>
+            <td class="px-4 py-4 text-center whitespace-nowrap">
+              <span class="inline-block px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-black rounded-lg shadow-md">
+                ${it.qty}
+              </span>
+            </td>
+            <td class="px-4 py-4 text-gray-600 font-medium max-w-xs truncate">${it.remarks || "-"}</td>
+            <td class="px-4 py-4 whitespace-nowrap">
+              <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-bold">
+                ${it.category || "N/A"}
+              </span>
+            </td>
+            <td class="px-4 py-4 text-center whitespace-nowrap">
+              <select 
+                id="status_${it.ticket_id}_${it.item_id}" 
+                class="px-3 py-2 border-2 border-gray-300 rounded-lg font-bold text-sm transition-all"
+              >
                 <option ${it.status==="Pending"?"selected":""}>Pending</option>
                 <option ${it.status==="Approved"?"selected":""}>Approved</option>
                 <option ${it.status==="Rejected"?"selected":""}>Rejected</option>
               </select>
             </td>
-            <td class="p-3 border">
-              <input id="fb_${it.ticket_id}_${it.item_id}" class="border rounded p-2 w-full text-sm" value="${it.feedback||""}" placeholder="Feedback..." />
+            <td class="px-4 py-4 whitespace-nowrap">
+              <input 
+                id="fb_${it.ticket_id}_${it.item_id}" 
+                class="px-3 py-2 border-2 border-gray-300 rounded-lg w-full min-w-[200px] font-medium transition-all" 
+                value="${it.feedback||""}"
+                placeholder="Tulis feedback..."
+              />
             </td>
-            <td class="p-3 border text-xs text-gray-500">${it.created_at}</td>
-            <td class="p-3 border text-center">
-              <button class="btn-octobull-primary px-4 py-2 rounded-lg font-semibold text-xs"
-                onclick="updateItem('${it.ticket_id}','${it.item_id}')">
-                <i class="fas fa-save mr-1"></i>Save
+            <td class="px-4 py-4 text-gray-600 font-medium whitespace-nowrap">
+              <i class="far fa-calendar-alt text-gray-400 mr-2"></i>${it.created_at}
+            </td>
+            <td class="px-4 py-4 text-center whitespace-nowrap">
+              <button 
+                class="px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition-all"
+                onclick="updateItem('${it.ticket_id}','${it.item_id}')"
+              >
+                <i class="fas fa-save mr-2"></i>Save
               </button>
             </td>
           </tr>
         `;
       });
+      
+      // Update counters
+      document.getElementById("dataCount").textContent = `${allData.length} items ditemukan`;
+      document.getElementById("itemRange").textContent = `${start + 1}-${Math.min(end, allData.length)}`;
+      document.getElementById("totalItems").textContent = allData.length;
+      document.getElementById("pageInfo").innerHTML = `<i class="fas fa-file-alt mr-2"></i>Halaman ${currentPage} dari ${totalPages}`;
     }
 
+    // Update Pagination Buttons
+    function updatePagination() {
+      const pageButtons = document.getElementById("pageButtons");
+      const prevBtn = document.getElementById("prevBtn");
+      const nextBtn = document.getElementById("nextBtn");
+      
+      prevBtn.disabled = currentPage === 1;
+      nextBtn.disabled = currentPage === totalPages || totalPages === 0;
+      
+      pageButtons.innerHTML = "";
+      
+      // Show max 5 page buttons
+      let startPage = Math.max(1, currentPage - 2);
+      let endPage = Math.min(totalPages, startPage + 4);
+      
+      if (endPage - startPage < 4) {
+        startPage = Math.max(1, endPage - 4);
+      }
+      
+      for (let i = startPage; i <= endPage; i++) {
+        const btn = document.createElement("button");
+        btn.className = `pagination-btn px-4 py-3 border-2 rounded-xl font-bold ${
+          i === currentPage 
+            ? 'active' 
+            : 'border-gray-300 text-gray-700 bg-white'
+        }`;
+        btn.textContent = i;
+        btn.onclick = () => goToPage(i);
+        pageButtons.appendChild(btn);
+      }
+    }
+
+    // Go to Specific Page
+    function goToPage(page) {
+      if (page < 1 || page > totalPages) return;
+      currentPage = page;
+      renderPage();
+      updatePagination();
+      
+      // Scroll to top of table
+      document.querySelector('.table-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Update Active Filters Display
+    function updateActiveFilters() {
+      const container = document.getElementById("activeFilters");
+      container.innerHTML = "";
+      
+      if (currentCategory) {
+        container.innerHTML += `
+          <span class="filter-badge px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-bold flex items-center gap-2 w-fit">
+            <i class="fas fa-tag"></i>
+            Kategori: ${currentCategory}
+            <button onclick="clearFilter('category')" class="hover:text-purple-900">
+              <i class="fas fa-times"></i>
+            </button>
+          </span>
+        `;
+      }
+      
+      if (currentStatus) {
+        container.innerHTML += `
+          <span class="filter-badge px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-bold flex items-center gap-2 w-fit">
+            <i class="fas fa-info-circle"></i>
+            Status: ${currentStatus}
+            <button onclick="clearFilter('status')" class="hover:text-blue-900">
+              <i class="fas fa-times"></i>
+            </button>
+          </span>
+        `;
+      }
+    }
+
+    // Clear Filter
+    function clearFilter(type) {
+      if (type === 'category') {
+        document.getElementById("filterCategory").value = "";
+        currentCategory = "";
+      } else if (type === 'status') {
+        document.getElementById("filterStatus").value = "";
+        currentStatus = "";
+      }
+      loadItems();
+    }
+
+    // Update Item Status
     async function updateItem(ticket_id, item_id) {
       const status = document.getElementById(`status_${ticket_id}_${item_id}`).value;
       const feedback = document.getElementById(`fb_${ticket_id}_${item_id}`).value;
@@ -384,34 +605,51 @@
       form.append("status", status);
       form.append("feedback", feedback);
 
-      const r = await fetch(BASE_URL, { method: "POST", body: form });
-      const j = await r.json();
+      try {
+        const r = await fetch(BASE_URL, { method: "POST", body: form });
+        const j = await r.json();
 
-      if (j.success) {
-        alert("Berhasil diperbarui!");
-        loadItems();
-      } else {
-        alert("Gagal update item!");
+        if (j.success) {
+          // Show success feedback
+          const btn = event.target.closest('button');
+          const originalHTML = btn.innerHTML;
+          btn.innerHTML = '<i class="fas fa-check mr-2"></i>Tersimpan!';
+          btn.className = 'px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold rounded-lg shadow-lg';
+          
+          setTimeout(() => {
+            btn.innerHTML = originalHTML;
+            btn.className = 'px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition-all';
+          }, 2000);
+          
+          loadItems();
+        } else {
+          alert("❌ Gagal update item!");
+        }
+      } catch (e) {
+        console.error("Update failed", e);
+        alert("❌ Terjadi kesalahan koneksi!");
       }
     }
 
+    // Export to Excel
     async function exportExcel() {
       let url = `${BASE_URL}?action=exportRequests`;
 
-      if (currentCategory)
-        url += `&filter_category=${currentCategory}`;
-
-      if (currentStatus)
-        url += `&filter_status=${currentStatus}`;
+      if (currentCategory) url += `&filter_category=${currentCategory}`;
+      if (currentStatus) url += `&filter_status=${currentStatus}`;
 
       window.open(url, "_blank");
     }
 
+    // Logout
     function logout() {
-      localStorage.clear();
-      window.location.href = "login.html";
+      if (confirm("Yakin ingin keluar dari admin panel?")) {
+        localStorage.clear();
+        window.location.href = "login.html";
+      }
     }
 
+    // Initialize
     loadCategories().then(loadItems);
   </script>
 </body>
