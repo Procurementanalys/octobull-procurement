@@ -346,7 +346,7 @@
   </div>
 
   <script>
-    const BASE_URL = "https://script.google.com/macros/s/AKfycbwkPR-kE4bLNDg6NxuY53z7W8YgSoXssbKploTjPG9Xj_uLTsUzz6quQuLKBZEdxCP18Q/exec";
+    const BASE_URL = "https://script.google.com/macros/s/AKfycbylUW-XSL7i-hzFb6PjMmy_T-zYWUaZ8lnGpHsGUiklZ5mDQBo9zHJ8vJFfmwA5SMQNGQ/exec";
     
     let currentCategory = "";
     let currentStatus = "";
@@ -492,7 +492,7 @@
             <td class="px-4 py-4 text-center whitespace-nowrap">
               <button 
                 class="px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition-all"
-                onclick="updateItem('${it.ticket_id}','${it.item_id}')"
+                onclick=\"updateItem('${it.ticket_id}','${it.item_id}', this)\"
               >
                 <i class="fas fa-save mr-2"></i>Save
               </button>
@@ -594,7 +594,7 @@
     }
 
     // Update Item Status
-    async function updateItem(ticket_id, item_id) {
+    async function updateItem(ticket_id, item_id, btn) {
       const status = document.getElementById(`status_${ticket_id}_${item_id}`).value;
       const feedback = document.getElementById(`fb_${ticket_id}_${item_id}`).value;
 
@@ -611,9 +611,8 @@
 
         if (j.success) {
           // Show success feedback
-          const btn = event.target.closest('button');
           const originalHTML = btn.innerHTML;
-          btn.innerHTML = '<i class="fas fa-check mr-2"></i>Tersimpan!';
+          btn.innerHTML = '<i class="fas fa-check mr-2"></i>Data Berhasil disimpan';
           btn.className = 'px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold rounded-lg shadow-lg';
           
           setTimeout(() => {
