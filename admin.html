@@ -150,6 +150,102 @@
     .status-indicator.pending { background: #f59e0b; box-shadow: 0 0 10px rgba(245, 158, 11, 0.5); }
     .status-indicator.approved { background: #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
     .status-indicator.rejected { background: #ef4444; box-shadow: 0 0 10px rgba(239, 68, 68, 0.5); }
+
+    /* ========== FIXED: TAB STYLES ========== */
+    .tab-button {
+      transition: all 0.3s ease;
+      position: relative;
+      /* FIXED: Tab inactive sekarang memiliki background gradient biru yang terlihat */
+      background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
+      color: white;
+      border: 2px solid transparent;
+    }
+    
+    .tab-button:hover {
+      background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(30, 64, 175, 0.3);
+    }
+    
+    /* FIXED: Tab active sekarang lebih kontras dengan background putih dan border biru */
+    .tab-button.active {
+      background: white;
+      color: #1e40af;
+      font-weight: 800;
+      box-shadow: 0 8px 25px rgba(30, 64, 175, 0.2);
+      border: 2px solid #3b82f6;
+    }
+    
+    .tab-button.active::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      height: 4px;
+      background: linear-gradient(90deg, #3b82f6 0%, #1e40af 100%);
+      border-radius: 10px;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    /* ========== DASHBOARD CARD STYLES ========== */
+    .top10-card {
+      background: white;
+      border-radius: 1.25rem;
+      box-shadow: 
+        0 0 0 1px rgba(30, 64, 175, 0.08),
+        0 10px 40px rgba(30, 64, 175, 0.06),
+        0 20px 60px rgba(0, 0, 0, 0.04);
+      transition: all 0.3s ease;
+    }
+    
+    .top10-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 
+        0 0 0 1px rgba(30, 64, 175, 0.12),
+        0 20px 60px rgba(30, 64, 175, 0.1),
+        0 30px 80px rgba(0, 0, 0, 0.08);
+    }
+    
+    .rank-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 1.1rem;
+    }
+    
+    .rank-1 { background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); color: white; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4); }
+    .rank-2 { background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%); color: white; box-shadow: 0 4px 15px rgba(148, 163, 184, 0.4); }
+    .rank-3 { background: linear-gradient(135deg, #fb923c 0%, #ea580c 100%); color: white; box-shadow: 0 4px 15px rgba(251, 146, 60, 0.4); }
+    .rank-other { background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%); color: #475569; }
+    
+    .progress-bar {
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #3b82f6 0%, #1e40af 100%);
+      border-radius: 10px;
+      transition: width 1s ease-out;
+    }
   </style>
 </head>
 
@@ -182,8 +278,112 @@
     </div>
   </div>
 
-  <!-- MAIN CONTENT -->
-  <div class="max-w-full p-4 md:p-6 animate-fadeIn">
+  <!-- ========== FIXED: TAB NAVIGATION dengan background yang terlihat ========== -->
+  <div class="max-w-full px-6 pt-6">
+    <div class="inline-flex gap-3 animate-fadeIn">
+      <button 
+        class="tab-button active px-8 py-4 rounded-xl font-bold flex items-center gap-3 shadow-lg"
+        onclick="switchTab('dashboard')"
+        id="tabDashboard"
+      >
+        <i class="fas fa-chart-line text-xl"></i>
+        <span>Dashboard</span>
+      </button>
+      <button 
+        class="tab-button px-8 py-4 rounded-xl font-bold flex items-center gap-3 shadow-lg"
+        onclick="switchTab('admin')"
+        id="tabAdmin"
+      >
+        <i class="fas fa-tasks text-xl"></i>
+        <span>Admin Panel</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ========== DASHBOARD TAB CONTENT ========== -->
+  <div id="contentDashboard" class="tab-content active max-w-full p-4 md:p-6 animate-fadeIn">
+    
+    <!-- DASHBOARD HEADER -->
+    <div class="card-premium p-6 mb-6">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-700 rounded-xl flex items-center justify-center shadow-lg">
+          <i class="fas fa-chart-bar text-white text-2xl"></i>
+        </div>
+        <div>
+          <h2 class="text-2xl font-black text-gray-800">Dashboard Analytics</h2>
+          <p class="text-sm text-gray-600 font-semibold mt-1">Top 10 Performance Metrics</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOP 10 CARDS -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <!-- TOP 10 STORES -->
+      <div class="top10-card p-6">
+        <div class="flex items-center gap-3 mb-6 pb-4 border-b-2 border-gray-100">
+          <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl flex items-center justify-center shadow-lg">
+            <i class="fas fa-store text-white"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-black text-gray-800">Top 10 Stores</h3>
+            <p class="text-xs text-gray-500 font-semibold">Terbanyak Ticketing</p>
+          </div>
+        </div>
+        <div id="topStoreList" class="space-y-3">
+          <!-- Loading State -->
+          <div class="animate-pulse-loading text-center py-8">
+            <i class="fas fa-spinner fa-spin text-3xl text-blue-500 mb-2"></i>
+            <p class="text-sm font-bold text-gray-600">Memuat data...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOP 10 CATEGORIES -->
+      <div class="top10-card p-6">
+        <div class="flex items-center gap-3 mb-6 pb-4 border-b-2 border-gray-100">
+          <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-700 rounded-xl flex items-center justify-center shadow-lg">
+            <i class="fas fa-tags text-white"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-black text-gray-800">Top 10 Categories</h3>
+            <p class="text-xs text-gray-500 font-semibold">Kategori Terpopuler</p>
+          </div>
+        </div>
+        <div id="topCategoryList" class="space-y-3">
+          <!-- Loading State -->
+          <div class="animate-pulse-loading text-center py-8">
+            <i class="fas fa-spinner fa-spin text-3xl text-purple-500 mb-2"></i>
+            <p class="text-sm font-bold text-gray-600">Memuat data...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOP 10 ITEMS -->
+      <div class="top10-card p-6">
+        <div class="flex items-center gap-3 mb-6 pb-4 border-b-2 border-gray-100">
+          <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-green-700 rounded-xl flex items-center justify-center shadow-lg">
+            <i class="fas fa-box text-white"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-black text-gray-800">Top 10 Items</h3>
+            <p class="text-xs text-gray-500 font-semibold">Item Paling Sering Di-Request</p>
+          </div>
+        </div>
+        <div id="topItemList" class="space-y-3">
+          <!-- Loading State -->
+          <div class="animate-pulse-loading text-center py-8">
+            <i class="fas fa-spinner fa-spin text-3xl text-green-500 mb-2"></i>
+            <p class="text-sm font-bold text-gray-600">Memuat data...</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========== ADMIN PANEL TAB CONTENT ========== -->
+  <div id="contentAdmin" class="tab-content max-w-full p-4 md:p-6 animate-fadeIn">
     
     <!-- FILTERS & ACTIONS -->
     <div class="card-premium p-6 mb-6">
@@ -346,7 +546,7 @@
   </div>
 
   <script>
-    const BASE_URL = "https://script.google.com/macros/s/AKfycbylUW-XSL7i-hzFb6PjMmy_T-zYWUaZ8lnGpHsGUiklZ5mDQBo9zHJ8vJFfmwA5SMQNGQ/exec";
+    const BASE_URL = "https://script.google.com/macros/s/AKfycbzNiY1QUgiRhqXOd1jlg7yupn0q8Yt_hbSCszCyA4OfOEg38jGtrw_R8TKp_bkPon45fQ/exec";
     
     let currentCategory = "";
     let currentStatus = "";
@@ -354,6 +554,110 @@
     let currentPage = 1;
     const itemsPerPage = 20;
     let totalPages = 1;
+
+    // ========== TAB SWITCHING FUNCTION ==========
+    function switchTab(tabName) {
+      // Hide all tab contents
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+      });
+      
+      // Remove active class from all tab buttons
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      
+      // Show selected tab content
+      document.getElementById('content' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.add('active');
+      
+      // Add active class to selected tab button
+      document.getElementById('tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.add('active');
+      
+      // Load dashboard data when switching to dashboard tab
+      if (tabName === 'dashboard') {
+        loadDashboardData();
+      }
+    }
+
+    // ========== LOAD DASHBOARD DATA ==========
+    async function loadDashboardData() {
+      try {
+        const response = await fetch(`${BASE_URL}?action=top10dashboard`);
+        const data = await response.json();
+        
+        // Render Top 10 Stores
+        renderTop10(data.top_store, 'topStoreList', 'blue');
+        
+        // Render Top 10 Categories
+        renderTop10(data.top_category, 'topCategoryList', 'purple');
+        
+        // Render Top 10 Items
+        renderTop10(data.top_item, 'topItemList', 'green');
+        
+      } catch (error) {
+        console.error('Failed to load dashboard data:', error);
+        
+        // Show error state
+        ['topStoreList', 'topCategoryList', 'topItemList'].forEach(id => {
+          document.getElementById(id).innerHTML = `
+            <div class="text-center py-8">
+              <i class="fas fa-exclamation-triangle text-3xl text-red-500 mb-2"></i>
+              <p class="text-sm font-bold text-gray-600">Gagal memuat data</p>
+            </div>
+          `;
+        });
+      }
+    }
+
+    // ========== RENDER TOP 10 LIST ==========
+    function renderTop10(data, containerId, color) {
+      const container = document.getElementById(containerId);
+      
+      if (!data || data.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-8">
+            <i class="fas fa-inbox text-3xl text-gray-400 mb-2"></i>
+            <p class="text-sm font-bold text-gray-600">Tidak ada data</p>
+          </div>
+        `;
+        return;
+      }
+      
+      // Find max count for progress bar calculation
+      const maxCount = Math.max(...data.map(item => item.count));
+      
+      let html = '';
+      data.forEach((item, index) => {
+        const rank = index + 1;
+        const rankClass = 
+          rank === 1 ? 'rank-1' :
+          rank === 2 ? 'rank-2' :
+          rank === 3 ? 'rank-3' : 'rank-other';
+        
+        const percentage = (item.count / maxCount) * 100;
+        
+        html += `
+          <div class="flex items-center gap-3 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-all">
+            <div class="rank-badge ${rankClass}">
+              ${rank}
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex justify-between items-center mb-2">
+                <p class="font-bold text-gray-800 truncate pr-2">${item.name}</p>
+                <span class="px-3 py-1 bg-gradient-to-r from-${color}-500 to-${color}-600 text-white rounded-full text-xs font-black whitespace-nowrap">
+                  ${item.count}
+                </span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: ${percentage}%"></div>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      
+      container.innerHTML = html;
+    }
 
     // Load Categories
     async function loadCategories() {
@@ -622,11 +926,11 @@
           
           loadItems();
         } else {
-          alert("❌ Gagal update item!");
+          alert("Gagal update item!");
         }
       } catch (e) {
         console.error("Update failed", e);
-        alert("❌ Terjadi kesalahan koneksi!");
+        alert("Terjadi kesalahan koneksi!");
       }
     }
 
@@ -648,8 +952,12 @@
       }
     }
 
-    // Initialize
+    // ========== INITIALIZE ==========
+    // Load categories and initial data for Admin Panel
     loadCategories().then(loadItems);
+    
+    // Load dashboard data on page load
+    loadDashboardData();
   </script>
 </body>
 </html>
